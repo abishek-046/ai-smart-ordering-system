@@ -1,0 +1,17 @@
+{
+  "name": "ai-smart-ordering-system",
+  "version": "1.0.0",
+  "description": "AI-powered college canteen pre-ordering system",
+  "private": true,
+  "scripts": {
+    "install:all": "cd backend && npm install && cd ../frontend && npm install",
+    "setup": "npm run install:all && cd backend && npx prisma generate",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "seed": "cd backend && node src/utils/seed.js",
+    "build:frontend": "cd frontend && npm run build"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

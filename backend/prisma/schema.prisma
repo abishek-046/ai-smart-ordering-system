@@ -1,0 +1,122 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  ACCEPTED
+  PREPARING
+  READY
+  COLLECTED
+  CANCELLED
+}
+
+enum Category {
+  BREAKFAST
+  LUNCH
+  SNACKS
+  BEVERAGES
+  DESSERTS
+  SPECIAL
+}
+
+model User {
+  id          String   @id @default(cuid())
+  name        String
+  email       String   @unique
+  password    String
+  role        Role     @default(STUDENT)
+  studentId   String?  @unique
+  phone       String?
+  preferences Json?    @default("{}")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  cart        CartItem[]
+  orders      Order[]
+
+  @@map("users")
+}
+
+model FoodItem {
+  id              String    @id @default(cuid())
+  name            String
+  description     String
+  price           Float
+  category        Category
+  image           String?
+  isAvailable     Boolean   @default(true)
+  prepTimeMinutes Int       @default(10)
+  rating          Float     @default(0)
+  totalRatings    Int       @default(0)
+  tags            String[]  @default([])
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  cartItems       CartItem[]
+  orderItems      OrderItem[]
+
+  @@map("food_items")
+}
+
+model CartItem {
+  id         String   @id @default(cuid())
+  userId     String
+  foodItemId String
+  quantity   Int      @default(1)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  foodItem FoodItem @relation(fields: [foodItemId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, foodItemId])
+  @@map("cart_items")
+}
+
+model Order {
+  id                String      @id @default(cuid())
+  token             String      @unique
+  userId            String
+  status            OrderStatus @default(PENDING)
+  totalAmount       Float
+  pickupTime        DateTime
+  estimatedPrepTime Int         @default(15)
+  specialInstructions String?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  acceptedAt        DateTime?
+  preparingAt       DateTime?
+  readyAt           DateTime?
+  collectedAt       DateTime?
+  cancelledAt       DateTime?
+
+  user      User        @relation(fields: [userId], references: [id])
+  items     OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id         String   @id @default(cuid())
+  orderId    String
+  foodItemId String
+  quantity   Int
+  unitPrice  Float
+  createdAt  DateTime @default(now())
+
+  order    Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  foodItem FoodItem @relation(fields: [foodItemId], references: [id])
+
+  @@map("order_items")
+}
