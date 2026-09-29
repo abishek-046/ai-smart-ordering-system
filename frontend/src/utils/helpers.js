@@ -12,22 +12,22 @@ export const formatDateTime = (dateStr) =>
 
 export const getStatusColor = (status) => {
   const map = {
-    PENDING: 'status-pending',
-    ACCEPTED: 'status-accepted',
+    PENDING:   'status-pending',
+    ACCEPTED:  'status-accepted',
     PREPARING: 'status-preparing',
-    READY: 'status-ready',
+    READY:     'status-ready',
     COLLECTED: 'status-collected',
     CANCELLED: 'status-cancelled',
   };
-  return map[status] || 'badge bg-gray-100 text-gray-700';
+  return map[status] || 'badge bg-charcoal-100 text-charcoal-600';
 };
 
 export const getStatusLabel = (status) => {
   const map = {
-    PENDING: '⏳ Pending',
-    ACCEPTED: '✅ Accepted',
+    PENDING:   '⏳ Pending',
+    ACCEPTED:  '✅ Accepted',
     PREPARING: '👨‍🍳 Preparing',
-    READY: '🔔 Ready for Pickup',
+    READY:     '🔔 Ready for Pickup',
     COLLECTED: '✅ Collected',
     CANCELLED: '❌ Cancelled',
   };
@@ -37,22 +37,29 @@ export const getStatusLabel = (status) => {
 export const getCategoryLabel = (cat) => {
   const map = {
     BREAKFAST: '🌅 Breakfast',
-    LUNCH: '🍱 Lunch',
-    SNACKS: '🍟 Snacks',
+    LUNCH:     '🍱 Lunch',
+    SNACKS:    '🍟 Snacks',
     BEVERAGES: '☕ Beverages',
-    DESSERTS: '🍮 Desserts',
-    SPECIAL: "⭐ Today's Special",
+    DESSERTS:  '🍮 Desserts',
+    SPECIAL:   "⭐ Today's Special",
   };
   return map[cat] || cat;
 };
 
 export const getCategoryEmoji = (cat) => {
-  const map = { BREAKFAST: '🌅', LUNCH: '🍱', SNACKS: '🍟', BEVERAGES: '☕', DESSERTS: '🍮', SPECIAL: '⭐' };
+  const map = {
+    BREAKFAST: '🌅',
+    LUNCH:     '🍛',
+    SNACKS:    '🍟',
+    BEVERAGES: '☕',
+    DESSERTS:  '🍮',
+    SPECIAL:   '⭐',
+  };
   return map[cat] || '🍽️';
 };
 
 export const getApiError = (err) =>
   err.response?.data?.message ||
-  (err.response?.data?.errors?.[0]?.msg) ||
+  err.response?.data?.errors?.[0]?.msg ||
   err.message ||
   'Something went wrong';

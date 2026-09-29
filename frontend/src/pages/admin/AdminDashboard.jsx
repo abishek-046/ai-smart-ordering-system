@@ -4,81 +4,96 @@ import { adminApi } from '../../services/api';
 import { formatCurrency } from '../../utils/helpers';
 import Spinner from '../../components/ui/Spinner';
 
+const STAT_THEME = [
+  { key: 'activeOrders',   label: 'Active Orders',   icon: '🔥', bg: '#fef2f2', border: 'rgba(239,68,68,0.2)',   text: '#dc2626', link: '/admin/orders' },
+  { key: 'todayOrders',    label: "Today's Orders",  icon: '📋', bg: '#eff6ff', border: 'rgba(59,130,246,0.2)', text: '#2563eb', link: '/admin/orders' },
+  { key: 'pendingOrders',  label: 'Pending Approval',icon: '⏳', bg: '#fffbeb', border: 'rgba(217,119,6,0.2)',  text: '#d97706', link: '/admin/orders' },
+  { key: 'todayRevenue',   label: "Today's Revenue", icon: '💰', bg: '#f0fdf4', border: 'rgba(34,197,94,0.2)',  text: '#16a34a', link: '/admin/analytics', isCurrency: true },
+  { key: 'totalStudents',  label: 'Students',        icon: '👥', bg: '#faf5ff', border: 'rgba(139,92,246,0.2)','text': '#7c3aed', link: '#' },
+  { key: 'menuItemCount',  label: 'Menu Items',      icon: '🍽️', bg: '#fff7ed', border: 'rgba(217,119,6,0.15)', text: '#d97706', link: '/admin/menu' },
+];
+
+const QUICK = [
+  { to: '/admin/kitchen',     icon: '👨‍🍳', label: 'Kitchen Queue' },
+  { to: '/admin/orders',      icon: '📋', label: 'All Orders' },
+  { to: '/admin/menu',        icon: '🍽️', label: 'Manage Menu' },
+  { to: '/admin/predictions', icon: '🤖', label: 'AI Predictions' },
+];
+
 export default function AdminDashboard() {
   const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     adminApi.getDashboard()
-      .then((res) => setSummary(res.data.summary))
+      .then(r => setSummary(r.data.summary))
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
   if (loading) return <div className="flex justify-center py-20"><Spinner size="lg" /></div>;
 
-  const stats = [
-    { label: 'Active Orders', value: summary?.activeOrders ?? 0, icon: '🔥', color: 'bg-red-50 text-red-700', link: '/admin/orders?status=PREPARING' },
-    { label: "Today's Orders", value: summary?.todayOrders ?? 0, icon: '📋', color: 'bg-blue-50 text-blue-700', link: '/admin/orders' },
-    { label: 'Pending Approval', value: summary?.pendingOrders ?? 0, icon: '⏳', color: 'bg-yellow-50 text-yellow-700', link: '/admin/orders?status=PENDING' },
-    { label: "Today's Revenue", value: formatCurrency(summary?.todayRevenue ?? 0), icon: '💰', color: 'bg-green-50 text-green-700', link: '/admin/analytics' },
-    { label: 'Total Students', value: summary?.totalStudents ?? 0, icon: '👥', color: 'bg-purple-50 text-purple-700', link: '#' },
-    { label: 'Menu Items', value: summary?.menuItemCount ?? 0, icon: '🍽️', color: 'bg-orange-50 text-orange-700', link: '/admin/menu' },
-  ];
-
   return (
-    <div className="space-y-6">
+    <div className="space-y-7 animate-fade-in">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard Overview</h1>
-        <p className="text-gray-500 text-sm mt-0.5">Real-time canteen performance</p>
+        <h2 className="font-display text-2xl font-bold text-charcoal-900">Overview</h2>
+        <p className="text-charcoal-400 text-sm font-body mt-0.5">Real-time canteen performance</p>
       </div>
 
+      {/* Stats grid */}
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-        {stats.map((s) => (
-          <Link key={s.label} to={s.link} className={`${s.color} rounded-2xl p-5 hover:opacity-90 transition-opacity`}>
+        {STAT_THEME.map(s => (
+          <Link key={s.key} to={s.link}
+                className="rounded-3xl p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover"
+                style={{ background: s.bg, border: `1px solid ${s.border}` }}>
             <div className="flex items-start justify-between mb-3">
               <span className="text-3xl">{s.icon}</span>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{s.value}</p>
-            <p className="text-sm font-medium text-gray-600 mt-0.5">{s.label}</p>
+            <p className="font-display font-bold text-2xl text-charcoal-900">
+              {s.isCurrency ? formatCurrency(summary?.[s.key] ?? 0) : (summary?.[s.key] ?? 0)}
+            </p>
+            <p className="text-sm font-semibold mt-0.5" style={{ color: s.text }}>{s.label}</p>
           </Link>
         ))}
       </div>
 
-      {/* Quick actions */}
-      <div className="card">
-        <h2 className="font-bold text-gray-900 mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {[
-            { to: '/admin/kitchen', icon: '👨‍🍳', label: 'Kitchen Queue' },
-            { to: '/admin/orders', icon: '📋', label: 'All Orders' },
-            { to: '/admin/menu', icon: '🍽️', label: 'Manage Menu' },
-            { to: '/admin/predictions', icon: '🤖', label: 'AI Predictions' },
-          ].map((a) => (
-            <Link key={a.to} to={a.to} className="flex flex-col items-center gap-2 p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors text-center">
-              <span className="text-2xl">{a.icon}</span>
-              <span className="text-xs font-semibold text-gray-700">{a.label}</span>
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      {summary?.pendingOrders > 0 && (
-        <div className="bg-yellow-50 border-2 border-yellow-400 rounded-2xl p-5 animate-pulse">
-          <div className="flex items-center justify-between">
+      {/* Pending alert */}
+      {(summary?.pendingOrders ?? 0) > 0 && (
+        <div className="rounded-3xl p-5 relative overflow-hidden"
+             style={{ background: 'linear-gradient(135deg,rgba(217,119,6,0.1),rgba(245,158,11,0.05))', border: '2px solid rgba(217,119,6,0.35)' }}>
+          <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <span className="text-3xl">🔔</span>
+              <span className="text-3xl animate-bounce">🔔</span>
               <div>
-                <p className="font-bold text-yellow-900 text-lg">{summary.pendingOrders} NEW order{summary.pendingOrders > 1 ? 's' : ''} waiting!</p>
-                <p className="text-yellow-700 text-sm">Accept quickly so the kitchen can start preparing</p>
+                <p className="font-display font-bold text-charcoal-900 text-lg">
+                  {summary.pendingOrders} order{summary.pendingOrders > 1 ? 's' : ''} waiting for acceptance!
+                </p>
+                <p className="text-charcoal-600 text-sm font-body">Accept quickly so the kitchen can start preparing</p>
               </div>
             </div>
-            <Link to="/admin/orders" className="bg-yellow-500 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-yellow-600 transition-colors flex-shrink-0 shadow">
+            <Link to="/admin/orders"
+                  className="flex-shrink-0 font-bold text-sm py-2.5 px-5 rounded-2xl text-white transition-all hover:shadow-gold"
+                  style={{ background: 'linear-gradient(135deg,#d97706,#f59e0b)' }}>
               Accept Now →
             </Link>
           </div>
         </div>
       )}
+
+      {/* Quick actions */}
+      <div className="card">
+        <h2 className="font-display font-bold text-charcoal-900 mb-5">Quick Actions</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {QUICK.map(a => (
+            <Link key={a.to} to={a.to}
+                  className="flex flex-col items-center gap-2 p-5 rounded-2xl transition-all duration-200 hover:-translate-y-0.5"
+                  style={{ background: '#fdf8f0', border: '1px solid rgba(217,119,6,0.1)' }}>
+              <span className="text-3xl">{a.icon}</span>
+              <span className="text-xs font-bold text-charcoal-700 text-center">{a.label}</span>
+            </Link>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

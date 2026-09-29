@@ -7,69 +7,113 @@ export default function Cart() {
   const { cart, loading, updateItem, removeItem, clearCart } = useCart();
   const navigate = useNavigate();
 
-  if (loading) return <div className="flex justify-center py-20"><Spinner size="lg" /></div>;
+  if (loading) return (
+    <div className="flex justify-center items-center py-32"><Spinner size="lg" /></div>
+  );
 
   if (cart.items.length === 0) {
     return (
-      <div className="text-center py-20">
-        <div className="text-6xl mb-4">🛒</div>
-        <h2 className="text-xl font-bold text-gray-900 mb-2">Your cart is empty</h2>
-        <p className="text-gray-500 mb-6">Add some delicious food to get started</p>
-        <Link to="/menu" className="btn-primary inline-block">Browse Menu →</Link>
+      <div className="max-w-md mx-auto text-center py-24 animate-fade-in">
+        <div className="w-24 h-24 rounded-3xl flex items-center justify-center text-5xl mx-auto mb-6"
+             style={{ background: 'rgba(217,119,6,0.08)', border: '1px solid rgba(217,119,6,0.15)' }}>
+          🛒
+        </div>
+        <h2 className="font-display text-2xl font-bold text-charcoal-900 mb-2">Your cart is empty</h2>
+        <p className="text-charcoal-500 font-body mb-8">Add some delicious dishes to get started</p>
+        <Link to="/menu" className="btn-gold px-8">Browse Menu →</Link>
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-5">
+    <div className="max-w-2xl mx-auto space-y-5 animate-fade-in">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">🛒 Your Cart</h1>
-        <button onClick={clearCart} className="text-sm text-red-500 hover:text-red-700 font-medium">Clear all</button>
+        <div>
+          <h1 className="font-display text-3xl font-bold text-charcoal-900">Your Cart</h1>
+          <p className="text-charcoal-400 text-sm font-body mt-0.5">{cart.totalItems} item{cart.totalItems !== 1 ? 's' : ''}</p>
+        </div>
+        <button onClick={clearCart}
+                className="text-sm text-red-500 hover:text-red-700 font-semibold transition-colors">
+          Clear all
+        </button>
       </div>
 
-      <div className="card space-y-4">
-        {cart.items.map((ci) => (
-          <div key={ci.id} className="flex items-center gap-4 pb-4 border-b border-gray-100 last:border-0 last:pb-0">
-            <div className="w-14 h-14 rounded-xl bg-orange-50 flex items-center justify-center text-2xl flex-shrink-0">
-              {getCategoryEmoji(ci.foodItem.category)}
+      {/* Items */}
+      <div className="card space-y-4 p-5">
+        {cart.items.map((ci, idx) => (
+          <div key={ci.id}>
+            <div className="flex items-center gap-4">
+              {/* Emoji */}
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0"
+                   style={{ background: 'rgba(217,119,6,0.08)' }}>
+                {getCategoryEmoji(ci.foodItem.category)}
+              </div>
+
+              {/* Name + price */}
+              <div className="flex-1 min-w-0">
+                <p className="font-display font-bold text-charcoal-900 text-sm truncate">{ci.foodItem.name}</p>
+                <p className="text-xs text-charcoal-400 font-body mt-0.5">
+                  {formatCurrency(ci.foodItem.price)} each · {ci.foodItem.prepTimeMinutes} min
+                </p>
+              </div>
+
+              {/* Qty controls */}
+              <div className="flex items-center gap-1 border border-charcoal-200 rounded-xl overflow-hidden">
+                <button onClick={() => updateItem(ci.foodItemId, ci.quantity - 1)}
+                        className="w-8 h-8 flex items-center justify-center text-charcoal-700 font-bold hover:bg-charcoal-50 transition-colors">
+                  −
+                </button>
+                <span className="w-7 text-center font-bold text-charcoal-900 text-sm">{ci.quantity}</span>
+                <button onClick={() => updateItem(ci.foodItemId, ci.quantity + 1)}
+                        className="w-8 h-8 flex items-center justify-center text-charcoal-700 font-bold hover:bg-charcoal-50 transition-colors">
+                  +
+                </button>
+              </div>
+
+              {/* Line total */}
+              <div className="text-right min-w-[64px]">
+                <p className="font-bold text-primary-700 text-sm">{formatCurrency(ci.foodItem.price * ci.quantity)}</p>
+                <button onClick={() => removeItem(ci.foodItemId)}
+                        className="text-xs text-red-400 hover:text-red-600 mt-0.5 font-medium transition-colors">
+                  Remove
+                </button>
+              </div>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="font-semibold text-gray-900 text-sm truncate">{ci.foodItem.name}</p>
-              <p className="text-xs text-gray-500">{formatCurrency(ci.foodItem.price)} each</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <button onClick={() => updateItem(ci.foodItemId, ci.quantity - 1)} className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center font-bold text-gray-700 transition-colors">−</button>
-              <span className="w-6 text-center font-bold text-gray-900 text-sm">{ci.quantity}</span>
-              <button onClick={() => updateItem(ci.foodItemId, ci.quantity + 1)} className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center font-bold text-gray-700 transition-colors">+</button>
-            </div>
-            <div className="text-right min-w-[60px]">
-              <p className="font-bold text-primary-600 text-sm">{formatCurrency(ci.foodItem.price * ci.quantity)}</p>
-              <button onClick={() => removeItem(ci.foodItemId)} className="text-xs text-red-400 hover:text-red-600 mt-0.5">Remove</button>
-            </div>
+            {idx < cart.items.length - 1 && <div className="h-px bg-charcoal-50 mt-4" />}
           </div>
         ))}
       </div>
 
       {/* Summary */}
       <div className="card">
-        <div className="space-y-2 mb-4">
-          <div className="flex justify-between text-sm text-gray-600">
+        <h2 className="font-display font-bold text-charcoal-900 mb-4">Order Summary</h2>
+        <div className="space-y-2 mb-5">
+          <div className="flex justify-between text-sm font-body text-charcoal-600">
             <span>Subtotal ({cart.totalItems} items)</span>
             <span>{formatCurrency(cart.total)}</span>
           </div>
-          <div className="flex justify-between text-sm text-gray-600">
+          <div className="flex justify-between text-sm font-body text-charcoal-600">
             <span>Preparation</span>
-            <span className="text-green-600">Included</span>
+            <span className="text-green-600 font-semibold">Included</span>
           </div>
-          <div className="border-t border-gray-100 pt-2 flex justify-between font-bold text-gray-900">
+          <div className="flex justify-between text-sm font-body text-charcoal-600">
+            <span>Payment</span>
+            <span className="text-charcoal-500">At counter (cash/UPI)</span>
+          </div>
+          <div className="h-px bg-charcoal-100 my-1" />
+          <div className="flex justify-between font-display font-bold text-charcoal-900 text-lg">
             <span>Total</span>
-            <span className="text-primary-600">{formatCurrency(cart.total)}</span>
+            <span style={{ color: '#d97706' }}>{formatCurrency(cart.total)}</span>
           </div>
         </div>
-        <button onClick={() => navigate('/pickup-time')} className="btn-primary w-full text-base py-3">
+
+        <button onClick={() => navigate('/pickup-time')}
+                className="btn-gold w-full py-3.5 text-base">
           ⏰ Select Pickup Time →
         </button>
-        <Link to="/menu" className="btn-secondary w-full text-center mt-2 block text-sm">Continue Shopping</Link>
+        <Link to="/menu" className="btn-secondary w-full text-center mt-3 block text-sm">
+          + Add More Items
+        </Link>
       </div>
     </div>
   );

@@ -3,45 +3,234 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --gold: #d97706;
+    --gold-light: #f59e0b;
+    --dark-bg: #0f0a06;
+    --card-bg: #1e1610;
+    --surface: #fdf8f0;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
   body {
-    @apply bg-gray-50 text-gray-900 font-sans antialiased;
+    @apply bg-cream text-charcoal-900 font-sans antialiased;
+    background-color: #fdf8f0;
+  }
+
+  h1, h2, h3 {
+    @apply font-display;
+    letter-spacing: -0.02em;
+  }
+
+  h4, h5, h6 {
+    @apply font-sans font-semibold;
   }
 }
 
 @layer components {
+
+  /* ── Buttons ─────────────────────────────────────────────── */
   .btn-primary {
-    @apply bg-primary-600 hover:bg-primary-700 text-white font-semibold py-2.5 px-5 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+    @apply inline-flex items-center justify-center gap-2
+           bg-gradient-to-r from-primary-600 to-primary-500
+           hover:from-primary-700 hover:to-primary-600
+           text-white font-semibold py-3 px-6 rounded-2xl
+           transition-all duration-200
+           shadow-gold hover:shadow-lg
+           disabled:opacity-50 disabled:cursor-not-allowed
+           focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2
+           active:scale-95;
   }
+
   .btn-secondary {
-    @apply bg-white hover:bg-gray-50 text-gray-700 font-semibold py-2.5 px-5 rounded-xl border border-gray-200 transition-all duration-200 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2;
+    @apply inline-flex items-center justify-center gap-2
+           bg-white hover:bg-gray-50
+           text-charcoal-800 font-semibold py-3 px-6 rounded-2xl
+           border border-charcoal-200 hover:border-charcoal-300
+           transition-all duration-200 shadow-card
+           disabled:opacity-50 disabled:cursor-not-allowed
+           focus:outline-none focus:ring-2 focus:ring-charcoal-300 focus:ring-offset-2
+           active:scale-95;
   }
+
+  .btn-gold {
+    @apply inline-flex items-center justify-center gap-2
+           text-white font-bold py-3 px-6 rounded-2xl
+           transition-all duration-200 shadow-gold
+           disabled:opacity-50 disabled:cursor-not-allowed
+           active:scale-95;
+    background: linear-gradient(135deg, #d97706 0%, #f59e0b 50%, #b45309 100%);
+  }
+  .btn-gold:hover {
+    background: linear-gradient(135deg, #b45309 0%, #d97706 50%, #92400e 100%);
+    box-shadow: 0 6px 24px rgba(217,119,6,0.5);
+  }
+
+  .btn-dark {
+    @apply inline-flex items-center justify-center gap-2
+           bg-charcoal-900 hover:bg-charcoal-800
+           text-cream font-semibold py-3 px-6 rounded-2xl
+           transition-all duration-200
+           disabled:opacity-50
+           active:scale-95;
+  }
+
   .btn-danger {
-    @apply bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 px-5 rounded-xl transition-all duration-200 disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2
+           bg-red-600 hover:bg-red-700 text-white font-semibold
+           py-3 px-6 rounded-2xl transition-all duration-200
+           disabled:opacity-50 active:scale-95;
   }
+
+  /* ── Inputs ──────────────────────────────────────────────── */
   .input-field {
-    @apply w-full px-4 py-3 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all placeholder-gray-400;
+    @apply w-full px-4 py-3 rounded-2xl
+           border border-charcoal-200 bg-white
+           text-charcoal-900 placeholder-charcoal-400
+           focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent
+           transition-all duration-200 font-body;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
   }
+  .input-field:focus {
+    box-shadow: 0 0 0 3px rgba(217,119,6,0.15), 0 1px 4px rgba(0,0,0,0.05);
+  }
+
+  /* ── Cards ───────────────────────────────────────────────── */
   .card {
-    @apply bg-white rounded-2xl shadow-sm border border-gray-100 p-6;
+    @apply bg-white rounded-3xl p-6;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
+    border: 1px solid rgba(0,0,0,0.05);
   }
+
+  .card-hover {
+    @apply card transition-all duration-300 hover:-translate-y-1;
+  }
+  .card-hover:hover {
+    box-shadow: 0 12px 40px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.08);
+  }
+
+  .card-dark {
+    @apply rounded-3xl p-6;
+    background: linear-gradient(145deg, #1e1610 0%, #2d2016 100%);
+    border: 1px solid rgba(245,158,11,0.15);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+  }
+
+  .glass-card {
+    @apply rounded-3xl p-6 backdrop-blur-sm;
+    background: rgba(255,255,255,0.85);
+    border: 1px solid rgba(255,255,255,0.7);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+  }
+
+  /* ── Badges ──────────────────────────────────────────────── */
   .badge {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold;
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold tracking-wide;
   }
-  .status-pending { @apply badge bg-yellow-100 text-yellow-800; }
-  .status-accepted { @apply badge bg-blue-100 text-blue-800; }
-  .status-preparing { @apply badge bg-orange-100 text-orange-800; }
-  .status-ready { @apply badge bg-green-100 text-green-800; }
-  .status-collected { @apply badge bg-gray-100 text-gray-700; }
-  .status-cancelled { @apply badge bg-red-100 text-red-700; }
+
+  .status-pending    { @apply badge bg-amber-100   text-amber-800;  }
+  .status-accepted   { @apply badge bg-blue-100    text-blue-800;   }
+  .status-preparing  { @apply badge bg-orange-100  text-orange-800; }
+  .status-ready      { @apply badge bg-green-100   text-green-800;  }
+  .status-collected  { @apply badge bg-charcoal-100 text-charcoal-600; }
+  .status-cancelled  { @apply badge bg-red-100     text-red-700;    }
+
+  /* ── Gold divider ────────────────────────────────────────── */
+  .gold-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #d97706, transparent);
+  }
+
+  /* ── Section titles ──────────────────────────────────────── */
+  .section-title {
+    @apply font-display text-2xl font-bold text-charcoal-900;
+    letter-spacing: -0.02em;
+  }
+  .section-subtitle {
+    @apply text-charcoal-500 text-sm font-body mt-1;
+  }
+
+  /* ── Food card ───────────────────────────────────────────── */
+  .food-card {
+    @apply bg-white rounded-3xl overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-1 cursor-pointer;
+    border: 1px solid rgba(0,0,0,0.06);
+    box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+  }
+  .food-card:hover {
+    box-shadow: 0 12px 40px rgba(0,0,0,0.13), 0 4px 12px rgba(0,0,0,0.08);
+    border-color: rgba(217,119,6,0.2);
+  }
+
+  /* ── Stat card ───────────────────────────────────────────── */
+  .stat-card {
+    @apply rounded-3xl p-5 flex flex-col gap-2;
+  }
+
+  /* ── Spinner ─────────────────────────────────────────────── */
+  .spinner {
+    @apply inline-block rounded-full animate-spin;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+  }
+
+  /* ── Nav link active ─────────────────────────────────────── */
+  .nav-active {
+    background: linear-gradient(135deg, rgba(217,119,6,0.15), rgba(245,158,11,0.08));
+    color: #d97706;
+    border-left: 3px solid #d97706;
+  }
+
+  /* ── Tag pill ────────────────────────────────────────────── */
+  .tag-pill {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+           bg-primary-50 text-primary-700;
+  }
 }
 
-/* Spinner */
-.spinner {
-  @apply inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin;
+/* ── Skeleton shimmer ──────────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(90deg, #f0ede6 25%, #e8e3d9 50%, #f0ede6 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: #f1f1f1; }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+/* ── Scrollbar ─────────────────────────────────────────────── */
+::-webkit-scrollbar          { width: 5px; height: 5px; }
+::-webkit-scrollbar-track    { background: #f0ede6; }
+::-webkit-scrollbar-thumb    { background: #ccc3b2; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #b3a590; }
+
+/* ── Selection color ───────────────────────────────────────── */
+::selection { background: rgba(217,119,6,0.2); color: #92400e; }
+
+/* ── Smooth page transitions ───────────────────────────────── */
+.page-enter { animation: fadeIn 0.3s ease-out; }
+
+/* ── Gold shimmer text ─────────────────────────────────────── */
+.text-gold-shimmer {
+  background: linear-gradient(135deg, #d97706, #f59e0b, #b45309);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Luxury hero bg ────────────────────────────────────────── */
+.hero-bg {
+  background: linear-gradient(135deg, #0f0a06 0%, #1e1208 40%, #2d1f0e 70%, #1a1208 100%);
+}
+
+/* ── Category tab ──────────────────────────────────────────── */
+.cat-tab {
+  @apply flex-shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 border whitespace-nowrap;
+}
+.cat-tab-active {
+  @apply cat-tab text-white border-transparent;
+  background: linear-gradient(135deg, #d97706, #f59e0b);
+  box-shadow: 0 4px 12px rgba(217,119,6,0.35);
+}
+.cat-tab-inactive {
+  @apply cat-tab bg-white text-charcoal-600 border-charcoal-200 hover:border-primary-300 hover:text-primary-700;
+}
