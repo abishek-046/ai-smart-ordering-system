@@ -41,3 +41,6 @@ desktop.ini
 # Prisma migrations are committed (they define DB history)
 # but generated client is not
 backend/node_modules/.prisma/
+
+# Vite cache / timestamp files
+frontend/vite.config.js.timestamp*
