@@ -23,7 +23,7 @@ const menuItems = [
     description: 'Thin, lacy semolina and rice-flour crepe scattered with crispy fried onions and slit green chillies, cooked on a flat iron tawa till golden. Served with peanut chutney and tomato sambar.',
     price: 50, category: 'BREAKFAST', prepTimeMinutes: 7, rating: 4.6, totalRatings: 215,
     tags: ['vegetarian', 'crispy', 'south-indian'],
-    image: 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=800&q=80&fit=crop&auto=format',
+    image: 'https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?w=800&q=80&fit=crop&auto=format',
   },
   {
     name: 'Idli Sambar (4 pcs)',
@@ -37,7 +37,7 @@ const menuItems = [
     description: 'Creamy rice and moong dal slow-cooked with cracked black pepper, cumin, curry leaves and golden cashews in clarified butter. A classic Tamil breakfast served with tiffin sambar and chutney.',
     price: 40, category: 'BREAKFAST', prepTimeMinutes: 6, rating: 4.4, totalRatings: 178,
     tags: ['vegetarian', 'comfort-food', 'south-indian', 'wholesome'],
-    image: 'https://images.unsplash.com/photo-1630383249896-483bdea74e44?w=800&q=80&fit=crop&auto=format',
+    image: 'https://images.unsplash.com/photo-1516714435131-44d6b64dc6a2?w=800&q=80&fit=crop&auto=format',
   },
   {
     name: 'Masala Egg Omelette & Toast',
@@ -51,7 +51,7 @@ const menuItems = [
     description: 'Coarsely ground semolina dry-roasted and tempered with mustard seeds, curry leaves, fresh ginger, dried red chillies and a mix of vegetables. Topped with freshly grated coconut.',
     price: 30, category: 'BREAKFAST', prepTimeMinutes: 5, rating: 4.1, totalRatings: 134,
     tags: ['vegetarian', 'light', 'quick'],
-    image: 'https://images.unsplash.com/photo-1645177628172-a94c1f96dabb?w=800&q=80&fit=crop&auto=format',
+    image: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=800&q=80&fit=crop&auto=format',
   },
   {
     name: 'Medu Vada (2 pcs)',
@@ -83,14 +83,14 @@ const menuItems = [
     description: 'Fragrant long-grain Basmati rice cooked with whole boiled eggs, crispy fried onions, fresh mint and a secret biryani masala blend. Served with boiled-egg raita and sliced onion salad.',
     price: 90, category: 'LUNCH', prepTimeMinutes: 12, rating: 4.5, totalRatings: 267,
     tags: ['non-vegetarian', 'rice', 'popular'],
-    image: 'https://images.unsplash.com/photo-1589647363585-f4a7d3a596d9?w=800&q=80&fit=crop&auto=format',
+    image: 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=800&q=80&fit=crop&auto=format',
   },
   {
     name: 'Paneer Butter Masala + 3 Rotis',
     description: 'Cottage cheese cubes simmered in a velvety tomato-cashew gravy enriched with butter, fresh cream and dried fenugreek leaves. Served with three freshly made butter-smeared rotis.',
     price: 95, category: 'LUNCH', prepTimeMinutes: 10, rating: 4.6, totalRatings: 298,
     tags: ['vegetarian', 'popular', 'north-indian', 'rich'],
-    image: 'https://images.unsplash.com/photo-1631452180519-91c3a8e6dbf3?w=800&q=80&fit=crop&auto=format',
+    image: 'https://images.unsplash.com/photo-1505253758473-96b7015fcd40?w=800&q=80&fit=crop&auto=format',
   },
   {
     name: 'Dal Tadka + Rice',
@@ -111,7 +111,7 @@ const menuItems = [
     description: 'Spiced white chickpeas cooked with tea-soaked whole spices and a deep onion-tomato gravy. Served with two giant deep-fried leavened bread puffs, sliced raw onion, lime and pickle.',
     price: 70, category: 'LUNCH', prepTimeMinutes: 8, rating: 4.5, totalRatings: 267,
     tags: ['vegetarian', 'north-indian', 'filling', 'popular'],
-    image: 'https://images.unsplash.com/photo-1626082927389-6cd097cee6a7?w=800&q=80&fit=crop&auto=format',
+    image: 'https://images.unsplash.com/photo-1625398407796-82650a8c135f?w=800&q=80&fit=crop&auto=format',
   },
   {
     name: 'Mutton Kheema Rice',
@@ -150,7 +150,7 @@ const menuItems = [
     description: 'Thick-cut potato fries fried twice for maximum crunch, tossed hot in a house blend of chilli powder, chaat masala and amchur. Served with sriracha mayo and tomato ketchup.',
     price: 50, category: 'SNACKS', prepTimeMinutes: 6, rating: 4.4, totalRatings: 378,
     tags: ['vegetarian', 'popular', 'crispy'],
-    image: 'https://images.unsplash.com/photo-1573080496219-bb964701c2ef?w=800&q=80&fit=crop&auto=format',
+    image: 'https://images.unsplash.com/photo-1576107232684-1279f390859f?w=800&q=80&fit=crop&auto=format',
   },
   {
     name: 'Bread Pakoda (3 pcs)',
@@ -196,7 +196,7 @@ const menuItems = [
     description: 'Freshly squeezed lime juice poured over crushed ice and topped with chilled soda water. Choose sweet, salted or masala. Perfect antidote to a hot afternoon.',
     price: 25, category: 'BEVERAGES', prepTimeMinutes: 2, rating: 4.5, totalRatings: 312,
     tags: ['vegetarian', 'cold', 'refreshing', 'quick'],
-    image: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed8fd?w=800&q=80&fit=crop&auto=format',
+    image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=800&q=80&fit=crop&auto=format',
   },
   {
     name: 'Filter Coffee',
@@ -214,7 +214,7 @@ const menuItems = [
     description: 'Three soft, deep-fried khoya dumplings with a mahogany crust and yielding centre, soaked overnight in a rose water and green-cardamom sugar syrup. Served warm.',
     price: 35, category: 'DESSERTS', prepTimeMinutes: 2, rating: 4.8, totalRatings: 456,
     tags: ['vegetarian', 'sweet', 'bestseller', 'classic'],
-    image: 'https://images.unsplash.com/photo-1601303516534-bf9bec1ab10e?w=800&q=80&fit=crop&auto=format',
+    image: 'https://images.unsplash.com/photo-1621303837174-89787a7d4729?w=800&q=80&fit=crop&auto=format',
   },
   {
     name: 'Kesari Paal Payasam',
@@ -228,7 +228,7 @@ const menuItems = [
     description: 'Dense, fudgy dark-chocolate brownie baked with roasted walnuts and a glossy crinkle top. Served warm with a generous scoop of vanilla ice cream and a cascade of warm chocolate sauce.',
     price: 60, category: 'DESSERTS', prepTimeMinutes: 2, rating: 4.7, totalRatings: 312,
     tags: ['vegetarian', 'chocolate', 'popular', 'indulgent'],
-    image: 'https://images.unsplash.com/photo-1606313564200-e75d5e7dcafd?w=800&q=80&fit=crop&auto=format',
+    image: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=800&q=80&fit=crop&auto=format',
   },
 
   // ═══════════════════════════════════════════════════════════════
