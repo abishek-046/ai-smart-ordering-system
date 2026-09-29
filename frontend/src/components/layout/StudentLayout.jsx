@@ -80,10 +80,15 @@ export default function StudentLayout() {
         </div>
       </nav>
 
-      {/* Mobile bottom nav */}
+      {/* Mobile bottom nav — shows 5 most important links */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 z-40 shadow-up">
         <div className="flex items-center justify-around py-2">
-          {navLinks.map((l) => (
+          {[
+            { to: '/dashboard', label: 'Home', icon: '🏠' },
+            { to: '/menu', label: 'Menu', icon: '🍽️' },
+            { to: '/orders', label: 'Orders', icon: '📋' },
+            { to: '/profile', label: 'Profile', icon: '👤' },
+          ].map((l) => (
             <NavLink
               key={l.to}
               to={l.to}

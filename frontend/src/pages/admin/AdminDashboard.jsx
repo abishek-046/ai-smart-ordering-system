@@ -64,17 +64,17 @@ export default function AdminDashboard() {
       </div>
 
       {summary?.pendingOrders > 0 && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-5">
+        <div className="bg-yellow-50 border-2 border-yellow-400 rounded-2xl p-5 animate-pulse">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="text-2xl">⚠️</span>
+              <span className="text-3xl">🔔</span>
               <div>
-                <p className="font-bold text-yellow-800">{summary.pendingOrders} order(s) waiting for acceptance</p>
-                <p className="text-yellow-700 text-sm">Review and accept pending orders quickly</p>
+                <p className="font-bold text-yellow-900 text-lg">{summary.pendingOrders} NEW order{summary.pendingOrders > 1 ? 's' : ''} waiting!</p>
+                <p className="text-yellow-700 text-sm">Accept quickly so the kitchen can start preparing</p>
               </div>
             </div>
-            <Link to="/admin/orders" className="bg-yellow-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-yellow-700 transition-colors flex-shrink-0">
-              Review Now
+            <Link to="/admin/orders" className="bg-yellow-500 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-yellow-600 transition-colors flex-shrink-0 shadow">
+              Accept Now →
             </Link>
           </div>
         </div>

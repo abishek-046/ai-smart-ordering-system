@@ -41,7 +41,7 @@ export const getCategoryLabel = (cat) => {
     SNACKS: '🍟 Snacks',
     BEVERAGES: '☕ Beverages',
     DESSERTS: '🍮 Desserts',
-    SPECIAL: '⭐ Special',
+    SPECIAL: "⭐ Today's Special",
   };
   return map[cat] || cat;
 };

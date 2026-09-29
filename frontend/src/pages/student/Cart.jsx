@@ -67,7 +67,7 @@ export default function Cart() {
           </div>
         </div>
         <button onClick={() => navigate('/pickup-time')} className="btn-primary w-full text-base py-3">
-          Select Pickup Time →
+          ⏰ Select Pickup Time →
         </button>
         <Link to="/menu" className="btn-secondary w-full text-center mt-2 block text-sm">Continue Shopping</Link>
       </div>

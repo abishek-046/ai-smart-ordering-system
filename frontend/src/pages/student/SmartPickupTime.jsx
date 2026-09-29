@@ -50,6 +50,16 @@ export default function SmartPickupTime() {
       <div>
         <h1 className="text-2xl font-bold text-gray-900">🤖 Smart Pickup Time</h1>
         <p className="text-gray-500 text-sm mt-1">AI-recommended slots based on current queue & kitchen load</p>
+        {/* Step indicator */}
+        <div className="flex items-center gap-2 mt-3 text-xs text-gray-400">
+          <span className="text-gray-400">🛒 Cart</span>
+          <span>→</span>
+          <span className="text-primary-600 font-semibold">⏰ Pickup Time</span>
+          <span>→</span>
+          <span>✅ Checkout</span>
+          <span>→</span>
+          <span>🎫 Confirm</span>
+        </div>
       </div>
 
       {/* AI analysis */}
