@@ -1,61 +1,60 @@
 import { useState } from 'react';
 
-// Category fallback gradients when no image is provided or image fails to load
-const FALLBACK_GRADIENT = {
-  BREAKFAST: 'linear-gradient(135deg,#fef3c7,#fde68a)',
-  LUNCH:     'linear-gradient(135deg,#fed7aa,#fbbf24)',
-  SNACKS:    'linear-gradient(135deg,#fee2e2,#fca5a5)',
-  BEVERAGES: 'linear-gradient(135deg,#bfdbfe,#93c5fd)',
-  DESSERTS:  'linear-gradient(135deg,#fce7f3,#f9a8d4)',
-  SPECIAL:   'linear-gradient(135deg,#ede9fe,#c4b5fd)',
-};
-
-const FALLBACK_EMOJI = {
-  BREAKFAST: '🌅',
-  LUNCH:     '🍛',
-  SNACKS:    '🍟',
-  BEVERAGES: '☕',
-  DESSERTS:  '🍮',
-  SPECIAL:   '⭐',
+// Category fallback gradients + emojis when photo fails or is missing
+const FALLBACK = {
+  BREAKFAST: { gradient: 'linear-gradient(135deg,#fef9c3,#fde68a)', emoji: '🌅' },
+  LUNCH:     { gradient: 'linear-gradient(135deg,#fed7aa,#fbbf24)', emoji: '🍛' },
+  SNACKS:    { gradient: 'linear-gradient(135deg,#fee2e2,#fca5a5)', emoji: '🍟' },
+  BEVERAGES: { gradient: 'linear-gradient(135deg,#bfdbfe,#93c5fd)', emoji: '☕' },
+  DESSERTS:  { gradient: 'linear-gradient(135deg,#fce7f3,#f9a8d4)', emoji: '🍮' },
+  SPECIAL:   { gradient: 'linear-gradient(135deg,#ede9fe,#c4b5fd)', emoji: '⭐' },
 };
 
 /**
- * FoodImage — renders a real dish photograph with graceful fallback.
+ * FoodImage — renders a real dish photograph with smooth fallback.
  *
  * Props:
- *   src       — Unsplash URL (from DB image field)
+ *   src       — full Unsplash (or any) image URL from DB
  *   alt       — dish name for accessibility
- *   category  — used for fallback gradient/emoji
- *   className — extra Tailwind classes on the wrapper div
- *   imgClass  — extra classes on the <img> element
+ *   category  — used to pick fallback gradient + emoji
+ *   className — extra classes on the outer wrapper div
  */
-export default function FoodImage({
-  src,
-  alt = 'Food',
-  category = 'SPECIAL',
-  className = '',
-  imgClass = '',
-}) {
-  const [errored, setErrored] = useState(false);
-  const showImage = src && !errored;
+export default function FoodImage({ src, alt = 'Food', category = 'SPECIAL', className = '' }) {
+  const [status, setStatus] = useState('loading'); // 'loading' | 'loaded' | 'error'
+  const fb = FALLBACK[category] || FALLBACK.SPECIAL;
+  const showImage = src && status !== 'error';
 
   return (
     <div
-      className={`food-img-wrap w-full h-full relative ${className}`}
-      style={!showImage ? { background: FALLBACK_GRADIENT[category] || FALLBACK_GRADIENT.SPECIAL } : {}}
+      className={`relative overflow-hidden w-full h-full ${className}`}
+      style={!showImage ? { background: fb.gradient } : { background: '#f0ede6' }}
     >
-      {showImage ? (
+      {/* Loading shimmer — shown until the image loads */}
+      {showImage && status === 'loading' && (
+        <div className="absolute inset-0 skeleton" />
+      )}
+
+      {/* Real photo */}
+      {showImage && (
         <img
           src={src}
           alt={alt}
           loading="lazy"
           decoding="async"
-          onError={() => setErrored(true)}
-          className={`food-img w-full h-full object-cover ${imgClass}`}
+          onLoad={() => setStatus('loaded')}
+          onError={() => setStatus('error')}
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          style={{
+            opacity: status === 'loaded' ? 1 : 0,
+            transition: 'opacity 0.3s ease',
+          }}
         />
-      ) : (
-        <div className="w-full h-full flex items-center justify-center text-5xl select-none">
-          {FALLBACK_EMOJI[category] || '🍽️'}
+      )}
+
+      {/* Fallback — shown when no src or image failed */}
+      {!showImage && (
+        <div className="absolute inset-0 flex items-center justify-center select-none">
+          <span className="text-5xl">{fb.emoji}</span>
         </div>
       )}
     </div>
