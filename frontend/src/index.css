@@ -191,10 +191,24 @@
 }
 
 /* ── Skeleton shimmer ──────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
 .skeleton {
   background: linear-gradient(90deg, #f0ede6 25%, #e8e3d9 50%, #f0ede6 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
+}
+
+/* ── Scrollbar hide utility ────────────────────────────────── */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 
 /* ── Scrollbar ─────────────────────────────────────────────── */
@@ -233,4 +247,75 @@
 }
 .cat-tab-inactive {
   @apply cat-tab bg-white text-charcoal-600 border-charcoal-200 hover:border-primary-300 hover:text-primary-700;
+}
+
+/* ── Food image container ──────────────────────────────────── */
+.food-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.food-img-wrap {
+  overflow: hidden;
+  position: relative;
+}
+.food-img-wrap:hover .food-img {
+  transform: scale(1.05);
+}
+
+/* ── Availability overlay ──────────────────────────────────── */
+.unavailable-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(3px);
+  background: rgba(15, 10, 6, 0.68);
+}
+
+/* ── Luxury info row ───────────────────────────────────────── */
+.info-row {
+  @apply flex items-center justify-between text-xs text-charcoal-400 font-body;
+}
+
+/* ── Pulse ring for READY status ───────────────────────────── */
+@keyframes pulseRing {
+  0%   { transform: scale(1);    opacity: 0.8; }
+  100% { transform: scale(1.6);  opacity: 0;   }
+}
+.pulse-ring::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: rgba(34,197,94,0.4);
+  animation: pulseRing 1.2s ease-out infinite;
+}
+
+/* ── Line clamp utilities ──────────────────────────────────── */
+.line-clamp-1 { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
+.line-clamp-2 { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.line-clamp-3 { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
+
+/* ── Luxury section separator ──────────────────────────────── */
+.section-sep {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(217,119,6,0.25), transparent);
+  margin: 1.5rem 0;
+}
+
+/* ── Image aspect ratio box ────────────────────────────────── */
+.aspect-food {
+  aspect-ratio: 4 / 3;
+}
+.aspect-card-hero {
+  aspect-ratio: 16 / 9;
+}
+
+/* ── Focus ring override for gold theme ────────────────────── */
+.focus-gold:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(217,119,6,0.25);
 }
