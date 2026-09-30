@@ -44,3 +44,8 @@ backend/node_modules/.prisma/
 
 # Vite cache / timestamp files
 frontend/vite.config.js.timestamp*
+
+# Screenshot capture tool dependencies (not source code)
+docs/evidence/screenshots/node_modules/
+docs/evidence/screenshots/package-lock.json
+docs/screenshots/node_modules/

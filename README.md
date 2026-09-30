@@ -1,25 +1,64 @@
 # AI-Smart Ordering System
+## College Canteen Pre-Ordering Platform
 
-> **Project Better Tomorrow** — Reducing physical queues at college canteens through AI-powered pre-ordering, smart pickup time prediction, and real-time order tracking.
+> **Project Better Tomorrow** — Eliminating physical canteen queues through AI-powered pre-ordering, smart pickup time prediction, digital tokens, and live order tracking.
 
 **GitHub:** https://github.com/abishek-046/ai-smart-ordering-system  
-**Team Member:** Abishek  
-**Milestone:** 75% Review Complete
+**Institution:** Sri Venkateswara College of Engineering  
+**Team:** Abishek
 
 ---
 
-## The Problem
+## Problem Statement
 
-College canteen students with tight class schedules lose **10–20 minutes daily** in unpredictable queues. Items sell out with no warning. There is no way to know wait times before arriving. Students regularly skip meals or arrive late to class. Canteen staff waste ~15% of daily food stock because they cannot forecast demand.
+College students with 15-minute lunch breaks lose 12–20 minutes in canteen queues during peak hours. ~40% abandon the canteen without food. Students miss classes. Canteen staff waste ~15% of daily food stock because they cannot forecast demand.
 
-→ Full research evidence: [`docs/1-empathy-portfolio.md`](docs/1-empathy-portfolio.md)  
-→ Precise problem statement: [`docs/2-problem-statement.md`](docs/2-problem-statement.md)
+The root cause: **the canteen operates as a walk-in, information-free system** with no pre-ordering, no availability checks, no preparation time estimates, and no plannable pickup time.
+
+> *"I want to order before I leave class. Just like Swiggy."* — Student interview, 10 Sep 2026
 
 ---
 
-## The Solution
+## Solution
 
-A full-stack web application that lets students **pre-order food**, get an **AI-recommended pickup time**, receive a **digital token**, and **track their order live**. Admins manage the kitchen through a real-time queue dashboard.
+A full-stack web application that allows students to:
+- Pre-order food before leaving the classroom
+- Get an **AI-predicted pickup time** based on live kitchen load
+- Receive a **digital token** for contactless pickup
+- Track their order live (15-second polling)
+
+And allows canteen staff to:
+- See all orders in advance with pickup times
+- Manage a **real-time kitchen queue** sorted by urgency
+- Predict kitchen load for the next 3 hours
+
+---
+
+## Key Features
+
+### Student Features
+- Register / Login (JWT + bcrypt)
+- Browse 32 authentic dishes with real food photos
+- Search and filter by category
+- Food availability checked in real-time
+- Cart with quantity validation (1–20 per item)
+- **AI Smart Pickup Time** — 12 scored slots from live database
+- **AI Food Recommendations** — personalised from order history
+- Checkout with server-side price calculation
+- Digital order token (ORD-MMDD-XXXX)
+- Live order tracking with progress steps
+- Order history with status filter
+- Order cancellation (pending only)
+- Profile and password management
+
+### Admin Features
+- Dashboard with live KPIs
+- View and manage all orders
+- **Status workflow:** PENDING → ACCEPTED → PREPARING → READY → COLLECTED
+- **Kitchen Queue** sorted by pickup time + urgency flags
+- Full menu management (add / edit / delete / availability toggle)
+- Analytics (orders by status, top items, hourly distribution)
+- **AI Kitchen Load Predictions** — next 3-hour forecast
 
 ---
 
@@ -28,72 +67,38 @@ A full-stack web application that lets students **pre-order food**, get an **AI-
 | Layer | Technology |
 |-------|-----------|
 | Frontend | React 18 + Vite + Tailwind CSS |
+| Fonts | Playfair Display + Inter + DM Sans (Google Fonts) |
 | Backend | Node.js + Express |
 | Database | PostgreSQL 18 + Prisma ORM |
-| Authentication | JWT + bcrypt |
-| AI Engine | Algorithmic (modular — swap in external ML API via env vars) |
+| Authentication | JWT + bcrypt (cost factor 12) |
+| AI Engine | Algorithmic (modular — swap external ML via `.env`) |
+| Testing | Custom E2E + API verification scripts |
 
 ---
 
-## Documentation (Design Thinking Evidence)
-
-All design thinking artefacts are in the [`docs/`](docs/) folder:
-
-| # | Document | Contents |
-|---|----------|----------|
-| 1 | [`docs/1-empathy-portfolio.md`](docs/1-empathy-portfolio.md) | 3 observation sessions · 5 interview transcripts · Empathy map · 8-stage Customer Journey Map |
-| 2 | [`docs/2-problem-statement.md`](docs/2-problem-statement.md) | POV statement · Precise problem statement · 8 HMW questions · Problem → Solution mapping |
-| 3 | [`docs/3-ai-interaction-audit.md`](docs/3-ai-interaction-audit.md) | 8 AI interactions · What was adopted/rejected with reasons · 5 hallucinations caught and corrected |
-| 4 | [`docs/4-user-testing.md`](docs/4-user-testing.md) | 3 real testers · 22 tasks · 91% success rate · 5 UX issues found and fixed |
-| 5 | [`docs/5-progress-report.md`](docs/5-progress-report.md) | Full rubric mapping · Architecture diagram · 20/20 e2e test results · Deferred features |
-
----
-
-## Project Structure
+## Architecture
 
 ```
-ai-smart-ordering-system/
-├── docs/                          ← Design Thinking documentation
-│   ├── 1-empathy-portfolio.md
-│   ├── 2-problem-statement.md
-│   ├── 3-ai-interaction-audit.md
-│   ├── 4-user-testing.md
-│   ├── 5-progress-report.md
-│   └── screenshots/
-├── backend/
-│   ├── prisma/
-│   │   ├── schema.prisma          ← Database schema (5 models)
-│   │   └── migrations/            ← Version-controlled DB migrations
-│   ├── src/
-│   │   ├── controllers/           ← auth, menu, cart, order, ai, admin
-│   │   ├── routes/                ← Express routers (6 files)
-│   │   ├── middleware/            ← JWT auth + error handler
-│   │   ├── services/ai.service.js ← AI pickup prediction + recommendations
-│   │   └── utils/                 ← Token generator, Prisma client, seed
-│   └── scripts/                   ← e2e-test.js, verify-api.js
-├── frontend/
-│   └── src/
-│       ├── pages/
-│       │   ├── auth/              ← Landing, Login, Register
-│       │   ├── student/           ← 11 student pages
-│       │   └── admin/             ← 6 admin pages
-│       ├── components/            ← Layout + reusable UI components
-│       ├── context/               ← AuthContext, CartContext
-│       ├── hooks/                 ← useOrderPolling, useLocalStorage
-│       └── services/api.js        ← Centralised Axios API layer
-├── .env.example                   ← Environment variable template
-└── README.md
+Browser (React + Vite + Tailwind)
+  └── Axios API service layer
+      └── Express REST API (Node.js)
+          ├── JWT + adminOnly middleware
+          ├── Rate limiting (200/15min global; 15/15min auth)
+          ├── 6 controllers (auth, menu, cart, order, ai, admin)
+          └── Prisma ORM
+              └── PostgreSQL 18
+                  └── 5 models: users, food_items, cart_items, orders, order_items
 ```
 
 ---
 
-## Setup Instructions
+## Installation
 
 ### Prerequisites
-- Node.js >= 18
-- PostgreSQL >= 14
+- Node.js ≥ 18
+- PostgreSQL 18
 
-### 1. Clone the repository
+### 1. Clone
 ```bash
 git clone https://github.com/abishek-046/ai-smart-ordering-system.git
 cd ai-smart-ordering-system
@@ -107,10 +112,8 @@ cd ../frontend && npm install
 
 ### 3. Configure environment
 ```bash
-# Copy the template
 cp .env.example backend/.env
 ```
-
 Edit `backend/.env`:
 ```env
 DATABASE_URL="postgresql://postgres:YOUR_PASSWORD@localhost:5432/smart_ordering"
@@ -120,9 +123,9 @@ PORT=5000
 FRONTEND_URL="http://localhost:5173"
 ```
 
-### 4. Create the database
+### 4. Create database
 ```sql
--- In psql or pgAdmin
+-- In psql or pgAdmin:
 CREATE DATABASE smart_ordering;
 ```
 
@@ -130,31 +133,32 @@ CREATE DATABASE smart_ordering;
 ```bash
 cd backend
 npx prisma migrate dev --name init
+npx prisma generate
 ```
 
-### 6. Seed sample data
+### 6. Seed demo data
 ```bash
 node src/utils/seed.js
 ```
-This creates:
-- **Admin account:** `admin@canteen.com` / `admin123`
-- **Student account:** `student@test.com` / `student123`
-- **27 menu items** across 6 categories
+Creates:
+- Admin: `admin@canteen.com` / `admin123`
+- Student: `student@test.com` / `student123`
+- 32 authentic South Indian dishes with real food photos
 
-### 7. Start the servers
+### 7. Start servers
 
 **Terminal 1 — Backend:**
 ```bash
 cd backend
 node src/index.js
-# → Server running on http://localhost:5000
+# → http://localhost:5000
 ```
 
 **Terminal 2 — Frontend:**
 ```bash
 cd frontend
 npm run dev
-# → App running on http://localhost:5173
+# → http://localhost:5173
 ```
 
 ### 8. Open in browser
@@ -162,63 +166,63 @@ npm run dev
 
 ---
 
-## API Documentation
+## API Reference
 
 Base URL: `http://localhost:5000/api`
 
-### Auth
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| POST | `/auth/register` | Register student | Public |
-| POST | `/auth/login` | Login | Public |
-| GET | `/auth/me` | Current user | JWT |
-| PUT | `/auth/profile` | Update profile | JWT |
-| PUT | `/auth/change-password` | Change password | JWT |
+### Authentication
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | `/auth/register` | Public | Register student |
+| POST | `/auth/login` | Public | Login (student or admin) |
+| GET | `/auth/me` | JWT | Current user |
+| PUT | `/auth/profile` | JWT | Update profile |
+| PUT | `/auth/change-password` | JWT | Change password |
 
 ### Menu
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| GET | `/menu` | List all items (filter by category/search) | Public |
-| GET | `/menu/:id` | Item details | Public |
-| POST | `/menu` | Create item | Admin |
-| PUT | `/menu/:id` | Update item | Admin |
-| DELETE | `/menu/:id` | Delete item | Admin |
-| PATCH | `/menu/:id/availability` | Toggle availability | Admin |
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/menu` | Public | List all items (filter: category, search, available) |
+| GET | `/menu/:id` | Public | Item details |
+| POST | `/menu` | Admin | Create item |
+| PUT | `/menu/:id` | Admin | Update item |
+| DELETE | `/menu/:id` | Admin | Delete item |
+| PATCH | `/menu/:id/availability` | Admin | Toggle availability |
 
 ### Cart
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| GET | `/cart` | Get cart | JWT |
-| POST | `/cart/add` | Add item | JWT |
-| PUT | `/cart/update` | Update quantity | JWT |
-| DELETE | `/cart/remove/:itemId` | Remove item | JWT |
-| DELETE | `/cart/clear` | Clear cart | JWT |
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/cart` | JWT | Get cart |
+| POST | `/cart/add` | JWT | Add item (qty validated 1–20) |
+| PUT | `/cart/update` | JWT | Update quantity |
+| DELETE | `/cart/remove/:itemId` | JWT | Remove item |
+| DELETE | `/cart/clear` | JWT | Clear cart |
 
 ### Orders
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| POST | `/orders` | Create order | JWT |
-| GET | `/orders` | Order history | JWT |
-| GET | `/orders/:id` | Order details | JWT |
-| GET | `/orders/track/:token` | Track by token | JWT |
-| PATCH | `/orders/:id/cancel` | Cancel order | JWT |
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | `/orders` | JWT | Create order (atomic transaction) |
+| GET | `/orders` | JWT | Order history |
+| GET | `/orders/:id` | JWT | Order details (owner only) |
+| GET | `/orders/track/:token` | JWT | Track by token (owner only) |
+| PATCH | `/orders/:id/cancel` | JWT | Cancel pending order |
 
 ### AI
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| GET | `/ai/pickup-slots` | AI pickup time recommendations | JWT |
-| GET | `/ai/recommendations` | Food recommendations | JWT |
-| GET | `/ai/kitchen-predictions` | Kitchen load forecast | Admin |
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/ai/pickup-slots` | JWT | 12 scored pickup time slots |
+| GET | `/ai/recommendations` | JWT | Personalised food picks |
+| GET | `/ai/kitchen-predictions` | Admin | 3-hour load forecast |
 
 ### Admin
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| GET | `/admin/dashboard` | Summary stats | Admin |
-| GET | `/admin/orders` | All orders | Admin |
-| PATCH | `/admin/orders/:id/status` | Update order status | Admin |
-| GET | `/admin/kitchen-queue` | Active kitchen queue | Admin |
-| GET | `/admin/analytics` | Order analytics | Admin |
-| GET | `/admin/ai-predictions` | Kitchen load prediction | Admin |
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/admin/dashboard` | Admin | Live KPIs |
+| GET | `/admin/orders` | Admin | All orders |
+| PATCH | `/admin/orders/:id/status` | Admin | Update status |
+| GET | `/admin/kitchen-queue` | Admin | Active orders by pickup time |
+| GET | `/admin/analytics` | Admin | Order analytics |
+| GET | `/admin/ai-predictions` | Admin | Kitchen load prediction |
 
 ---
 
@@ -226,7 +230,7 @@ Base URL: `http://localhost:5000/api`
 
 ```
 PENDING → ACCEPTED → PREPARING → READY → COLLECTED
-                                        ↘ CANCELLED (from PENDING only)
+                  ↘ CANCELLED (from PENDING or ACCEPTED only)
 ```
 
 ---
@@ -234,53 +238,110 @@ PENDING → ACCEPTED → PREPARING → READY → COLLECTED
 ## AI Engine
 
 ### Pickup Time Prediction
-Scores 12 time slots (15-min intervals) using:
-- **Load penalty** — active orders in that slot × 8 points
-- **Peak penalty** — 15 points during observed peak hours (8–9 AM, 12–2 PM)
-- **Wait bonus** — rewards earlier available slots
-- **Base prep time** — max item prep time + quantity overhead
+Reads live from database. Scores 12 candidate slots (15-min intervals):
+```
+score = 100 - (active_orders × 8) - (peak_penalty) + (wait_bonus)
 
-Returns top 3 as "Recommended", all 12 displayed with load indicators.
+peak_penalty = 15 if hour in [8, 9, 12, 13, 14]
+wait_bonus   = max(0, 30 - minutes_until_slot)
+base_prep    = max(item.prepTime) + ceil(totalQty × 1.5)
+```
+Top 3 by score marked as "Recommended". All 12 displayed with load indicators.
 
 ### Food Recommendations
-Scores available items using user's order history:
-- Category preference (frequency-weighted)
-- Reorder bonus (capped to encourage variety)
-- Price range fit (within 30% of user's average spend)
-- Item rating × review count (social proof)
-- New user fallback: top-rated items sorted by rating
+Scores all available items using user's last 20 completed orders:
+```
+score = (rating × 10) + category_match + reorder_bonus(capped 30) + price_proximity + popularity
+```
+Falls back to top-rated items for new users with no order history.
 
-### External API Integration
-Set `AI_API_KEY` and `AI_API_URL` in `.env` to route through an external ML API. The service layer checks these values first and falls back to the algorithmic engine if not set — no other code changes required.
+### External AI Integration
+Set `AI_API_KEY` + `AI_API_URL` in `.env` to route through any external ML API. The service checks these env vars first and falls back to the algorithmic engine on failure or if unset.
 
 ---
 
-## 75% Milestone Coverage
+## Testing
 
-### Technical Features
-- [x] Student registration & login (JWT + bcrypt)
-- [x] PostgreSQL database with Prisma ORM
-- [x] 27-item menu with categories and availability
-- [x] Cart add/remove/update with real-time sync
-- [x] Real order creation with atomic transaction
-- [x] Unique digital token per order (ORD-MMDD-XXXX)
-- [x] AI pickup time slot recommendation
-- [x] AI food recommendations from order history
-- [x] Live order tracking (15-second polling, auto-stops at terminal state)
-- [x] Order status workflow with timestamps
-- [x] Admin order management with status transitions
-- [x] Kitchen queue sorted by urgency
-- [x] Menu management (CRUD + availability toggle)
-- [x] Analytics dashboard (7/30-day periods)
-- [x] AI kitchen load prediction
+```bash
+# Run with backend server running on :5000
 
-### Design Thinking Evidence
-- [x] Empathy portfolio (observations + interviews + journey map)
-- [x] Precise problem statement derived from research data
-- [x] AI Interaction Audit (8 interactions, 5 hallucinations documented)
-- [x] User testing with 3 real users (91% task success rate)
-- [x] All 5 UX issues found in testing fixed and committed
-- [x] Progress report mapping to milestone rubric
+# API smoke tests (no DB required)
+cd backend && node scripts/verify-api.js
+# Expected: 20/20 PASS
+
+# Full end-to-end with real database
+cd backend && node scripts/e2e-test.js
+# Expected: 20/20 PASS — full student + admin flow
+
+# Frontend production build
+cd frontend && npm run build
+# Expected: 124 modules, 0 errors
+```
+
+---
+
+## Security
+
+| Control | Implementation |
+|---------|---------------|
+| Password storage | bcrypt, cost factor 12 |
+| API authentication | JWT Bearer tokens, verified server-side every request |
+| Admin routes | `protect + adminOnly` middleware — server-enforced |
+| Ownership | All order/cart operations scoped to `req.user.id` |
+| Price integrity | Total always calculated from DB — frontend sends no price |
+| Input validation | All endpoints: length, range, enum, date validation |
+| Rate limiting | 200/15min global; 15/15min on auth (skipSuccessful) |
+| Duplicate order | 60-second PENDING window check |
+| SQL injection | Prisma ORM throughout — no raw string interpolation |
+| Secrets | `.env` gitignored; `.env.example` provided |
+
+---
+
+## Edge Cases Handled
+
+- Empty cart checkout → 400
+- Unavailable item at checkout → 400 with item names
+- Negative/zero/excessive quantity → 400
+- Past pickup time → 400
+- Pickup time > 24h ahead → 400
+- Duplicate rapid order → 409
+- Token collision → retry + final uniqueness check
+- Expired JWT → 401 "Token expired"
+- Student accessing another student's order → 404
+- Student hitting admin endpoint → 403
+- Invalid status transition → 400 with allowed transitions
+- Negative price on menu create → 400
+- Invalid category enum → 400
+
+---
+
+## Design Thinking Documentation
+
+All research and design thinking artefacts are in `/docs`:
+
+```
+docs/
+├── design-thinking/
+│   ├── empathy-portfolio.md     ← empathy map, pain points, insights
+│   ├── interview-transcripts.md ← 5 full interview transcripts
+│   ├── observation-log.md       ← 3 sessions, timestamped logs
+│   ├── problem-definition.md    ← POV statement, official problem statement
+│   └── user-journey-map.md      ← current + future state journey map
+├── ai-audit/
+│   ├── ai-interaction-audit.md  ← 9 interactions, 5 hallucinations documented
+│   └── hallucination-corrections.md ← detailed fix log
+├── validation/
+│   ├── user-testing-plan.md     ← methodology, task sets
+│   ├── user-test-1.md           ← Student Tester A (laptop)
+│   ├── user-test-2.md           ← Student Tester B (Android mobile)
+│   ├── user-test-3.md           ← Canteen Staff Tester (admin flow)
+│   └── validation-summary.md    ← 5 issues found, 5 fixed
+├── evidence/
+│   ├── screenshots/             ← 20 application screenshots
+│   └── demo/demo-script.md      ← 8-minute walkthrough script
+└── review/
+    └── milestone-review-report.md ← rubric mapping, final status
+```
 
 ---
 
@@ -289,27 +350,29 @@ Set `AI_API_KEY` and `AI_API_URL` in `.env` to route through an external ML API.
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `DATABASE_URL` | ✅ | PostgreSQL connection string |
-| `JWT_SECRET` | ✅ | Secret for JWT signing |
-| `JWT_EXPIRES_IN` | No | Token expiry — default `7d` |
-| `PORT` | No | Backend port — default `5000` |
-| `FRONTEND_URL` | No | CORS origin — default `http://localhost:5173` |
-| `AI_API_KEY` | No | External AI API key (uses built-in engine if blank) |
+| `JWT_SECRET` | ✅ | JWT signing secret (keep long and random) |
+| `JWT_EXPIRES_IN` | No | Token expiry (default: `7d`) |
+| `PORT` | No | Backend port (default: `5000`) |
+| `FRONTEND_URL` | No | CORS origin (default: `http://localhost:5173`) |
+| `AI_API_KEY` | No | External AI API key (uses built-in engine if empty) |
 | `AI_API_URL` | No | External AI API base URL |
+| `NODE_ENV` | No | `development` or `production` |
 
 ---
 
-## Verification Scripts
+## Project Limitations
 
-```bash
-# Check all API routes and middleware (no DB required)
-cd backend
-node scripts/verify-api.js   # 20/20 tests
-
-# Full end-to-end flow test (requires running server + DB)
-node scripts/e2e-test.js     # 20/20 steps
-```
+The following features are intentionally deferred to future phases:
+- Real payment gateway (requires production HTTPS + business registration)
+- Push notifications (requires service worker + FCN)
+- Advanced ML model training (needs historical data volume)
+- QR code scanning (readable token achieves the same goal simply)
+- Production deployment (requires domain + SSL + CI/CD)
+- Multi-canteen support
+- Student food ratings
 
 ---
 
 *Built with React + Node.js + PostgreSQL + Prisma + Tailwind CSS*  
-*AI engine: algorithmic with external API escape hatch*
+*AI engine: algorithmic with external API escape hatch*  
+*Sri Venkateswara College of Engineering — September 2026*

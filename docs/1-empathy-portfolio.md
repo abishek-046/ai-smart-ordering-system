@@ -3,7 +3,7 @@
 ### Design Thinking Phase 1: Empathise
 
 **Project:** AI-Smart Ordering System  
-**College:** [Your College Name]  
+**College:** Rathinam Technical Campus  
 **Team Member:** Abishek  
 **Date of Research:** September 2026
 
