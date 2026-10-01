@@ -3,7 +3,7 @@
 ### Design Thinking Phase 2: Define
 
 **Project:** AI-Smart Ordering System  
-**College:** [Your College Name]  
+**College:** Rathinam Technical Campus  
 **Team Member:** Abishek  
 **Date:** 14 September 2026
 
@@ -170,4 +170,4 @@ The problem statement was validated against the research data using three checks
 ---
 
 *Document prepared for Design Thinking Review — 40% to 75% Milestone*  
-*Abishek — [Your College Name]*
+*Abishek — Rathinam Technical Campus*

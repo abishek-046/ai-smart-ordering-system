@@ -68,7 +68,7 @@ The AI listed 20+ features across authentication, menu, cart, ordering, AI predi
 **What I Rejected:**
 - Payment gateway integration — AI suggested Razorpay. Rejected because the 40% milestone focuses on ordering flow, not payment. College canteens also typically collect payment at counter.
 - Push notifications — AI suggested Firebase Cloud Messaging. Rejected as it requires app installation and Google account setup. Live order tracking with 15-second polling achieves the same result in a web context.
-- QR code scanning for token — AI suggested generating a QR. Rejected because it adds complexity without solving the core problem. A readable token number (ORD-0915-2259) is simpler and more accessible.
+- QR code scanning for token — AI suggested generating a QR. Rejected because it adds complexity without solving the core problem. A readable token number (ORD-0915-c2d8a3f1) is simpler and more accessible.
 - Star rating system for food — AI suggested post-order ratings. Rejected for 40% scope. Deferred to later milestone.
 
 ---
@@ -309,4 +309,4 @@ The five hallucinations caught during this project demonstrate that AI outputs r
 ---
 
 *Document prepared for Design Thinking Review — 40% to 75% Milestone*  
-*Abishek — [Your College Name]*
+*Abishek — Rathinam Technical Campus*

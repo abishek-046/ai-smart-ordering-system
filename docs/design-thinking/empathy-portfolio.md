@@ -2,7 +2,7 @@
 ## AI-Smart Ordering System — College Canteen Queue Problem
 
 **Project:** AI-Smart Ordering System  
-**Institution:** Sri Venkateswara College of Engineering  
+**Institution:** Rathinam Technical Campus  
 **Team Member:** Abishek  
 **Research Period:** 9–13 September 2026  
 **Methodology:** Direct observation + structured interviews
@@ -185,4 +185,4 @@ From interviews, students expressed these expectations for a solution:
 ---
 
 *Research conducted: 9–13 September 2026*  
-*Sri Venkateswara College of Engineering*
+*Rathinam Technical Campus*

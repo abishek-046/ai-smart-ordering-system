@@ -99,4 +99,4 @@ The AI-Smart Ordering System was tested by three representative users covering t
 ---
 
 *Validation summary prepared: 18 September 2026*  
-*Sri Venkateswara College of Engineering*
+*Rathinam Technical Campus*

@@ -3,7 +3,7 @@
 
 **Project:** AI-Smart Ordering System — Project Better Tomorrow  
 **GitHub:** https://github.com/abishek-046/ai-smart-ordering-system  
-**Institution:** Sri Venkateswara College of Engineering  
+**Institution:** Rathinam Technical Campus  
 **Team Member:** Abishek  
 **Date:** 30 September 2026
 
@@ -372,5 +372,5 @@ Design Thinking Evidence:
 ---
 
 *Milestone Review Report — AI-Smart Ordering System*  
-*Abishek — Sri Venkateswara College of Engineering — September 2026*  
+*Abishek — Rathinam Technical Campus — September 2026*  
 *GitHub: https://github.com/abishek-046/ai-smart-ordering-system*

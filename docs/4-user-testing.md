@@ -310,4 +310,4 @@ The most significant finding was from the admin tester (Rajan): the kitchen queu
 
 *Document prepared for Design Thinking Review — 40% to 75% Milestone*  
 *Testing conducted: 16–18 September 2026*  
-*Abishek — [Your College Name]*
+*Abishek — Rathinam Technical Campus*

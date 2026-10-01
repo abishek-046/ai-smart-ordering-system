@@ -46,7 +46,7 @@
 |-------|---------|---------|---------|-----------|
 | **1. Pre-order** (12:30 PM — during previous class) | Opens website on phone, browses menu, sees Chicken Biryani is available, adds to cart | "Perfect, it shows it's available and 130 rupees." | Calm, in control | Browsing real menu with real availability |
 | **2. AI Pickup Time** (12:31 PM) | Taps "Smart Pickup Time" — sees AI recommends 12:58 PM (low queue slot) | "12:58 is perfect — I can go right after class ends" | Confident, planned | AI predicts best slot based on live kitchen load |
-| **3. Order confirmation** (12:32 PM) | Places order, receives token ORD-0915-4821 | "Done. I can relax for the rest of class." | Relieved, focused | Digital token in 60 seconds — no queue needed |
+| **3. Order confirmation** (12:32 PM) | Places order, receives token ORD-0915-a4f2c8b1 | "Done. I can relax for the rest of class." | Relieved, focused | Digital token in 60 seconds — no queue needed |
 | **4. Class ends** (12:44 PM) | Sees order status: "Preparing" | "It's already being made" | Satisfied | Live status via 15-second polling — no uncertainty |
 | **5. Walk to canteen** (12:44–12:48 PM) | Walks at normal pace, no rushing | "By the time I get there it'll be ready" | Relaxed | Travel time used productively |
 | **6. Collection** (12:48 PM) | Approaches dedicated pickup counter, shows token, collects food | "Zero wait. This is amazing." | Delighted | No queue, no verbal exchange, no errors |
@@ -101,4 +101,4 @@ KITCHEN COORDINATION ───────────────────�
 ---
 
 *Journey map prepared: 14 September 2026*  
-*Sri Venkateswara College of Engineering*
+*Rathinam Technical Campus*

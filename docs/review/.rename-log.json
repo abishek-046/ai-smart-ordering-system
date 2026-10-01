@@ -1,0 +1,107 @@
+{
+  "filesChanged": [
+    {
+      "file": "README.md",
+      "changes": [
+        "Replaced 'Sri Venkateswara College of Engineering' → 'Rathinam Technical Campus' in Institution field (line 7)",
+        "Replaced 'Sri Venkateswara College of Engineering — September 2026' → 'Rathinam Technical Campus — September 2026' in footer (line 378)"
+      ]
+    },
+    {
+      "file": "docs/design-thinking/empathy-portfolio.md",
+      "changes": [
+        "Replaced 'Sri Venkateswara College of Engineering' → 'Rathinam Technical Campus' in Institution field (line 5)",
+        "Replaced '*Sri Venkateswara College of Engineering*' → '*Rathinam Technical Campus*' in footer (line 188)"
+      ]
+    },
+    {
+      "file": "docs/design-thinking/interview-transcripts.md",
+      "changes": [
+        "Replaced 'All interviews conducted in person at Sri Venkateswara College of Engineering.' → 'Rathinam Technical Campus.' in footer (line 192)"
+      ]
+    },
+    {
+      "file": "docs/design-thinking/observation-log.md",
+      "changes": [
+        "Replaced 'Sri Venkateswara College of Engineering' → 'Rathinam Technical Campus' in Institution field (line 5)",
+        "Replaced '*Sri Venkateswara College of Engineering*' → '*Rathinam Technical Campus*' in footer (line 130)"
+      ]
+    },
+    {
+      "file": "docs/design-thinking/problem-definition.md",
+      "changes": [
+        "Replaced 'Sri Venkateswara College of Engineering' → 'Rathinam Technical Campus' in WHERE section body text (line 19)",
+        "Replaced '*Sri Venkateswara College of Engineering*' → '*Rathinam Technical Campus*' in footer (line 138)"
+      ]
+    },
+    {
+      "file": "docs/design-thinking/user-journey-map.md",
+      "changes": [
+        "Replaced '*Sri Venkateswara College of Engineering*' → '*Rathinam Technical Campus*' in footer (line 104)",
+        "Updated token example 'ORD-0915-4821' → 'ORD-0915-a4f2c8b1' in journey table row 3 to match current 8-hex token format"
+      ]
+    },
+    {
+      "file": "docs/validation/validation-summary.md",
+      "changes": [
+        "Replaced '*Sri Venkateswara College of Engineering*' → '*Rathinam Technical Campus*' in footer (line 102)"
+      ]
+    },
+    {
+      "file": "docs/review/milestone-review-report.md",
+      "changes": [
+        "Replaced 'Sri Venkateswara College of Engineering' → 'Rathinam Technical Campus' in Institution field (line 6)",
+        "Replaced 'Abishek — Sri Venkateswara College of Engineering — September 2026' → 'Abishek — Rathinam Technical Campus — September 2026' in footer (line 375)"
+      ]
+    },
+    {
+      "file": "docs/2-problem-statement.md",
+      "changes": [
+        "Replaced '[Your College Name]' → 'Rathinam Technical Campus' in College field (line 6)",
+        "Replaced 'Abishek — [Your College Name]' → 'Abishek — Rathinam Technical Campus' in footer (line 173)"
+      ]
+    },
+    {
+      "file": "docs/3-ai-interaction-audit.md",
+      "changes": [
+        "Replaced 'Abishek — [Your College Name]' → 'Abishek — Rathinam Technical Campus' in footer (line 312)",
+        "Updated token example 'ORD-0915-2259' → 'ORD-0915-c2d8a3f1' in rejected features list to match current 8-hex token format"
+      ]
+    },
+    {
+      "file": "docs/4-user-testing.md",
+      "changes": [
+        "Replaced 'Abishek — [Your College Name]' → 'Abishek — Rathinam Technical Campus' in footer (line 313)"
+      ]
+    },
+    {
+      "file": "docs/evidence/demo/demo-script.md",
+      "changes": [
+        "Updated token example 'ORD-0929-4578' → 'ORD-0929-a3f8c2d1' in Step 7 demo instructions to match current 8-hex token format"
+      ]
+    }
+  ],
+  "searchPatterns": {
+    "replaced": [
+      "Sri Venkateswara College of Engineering → Rathinam Technical Campus",
+      "[Your College Name] → Rathinam Technical Campus",
+      "[College Name] → Rathinam Technical Campus"
+    ],
+    "notFound": [
+      "SVCE (institution abbreviation) — zero occurrences found in any file",
+      "27 items / 28 items — not found; key docs already show correct count of 32 dishes",
+      "4-digit token claims in formal docs — phase2-rectification-report.md correctly describes the OLD format as a problem that was fixed"
+    ]
+  },
+  "tokenFormatNote": "Token examples in user test transcripts (docs/4-user-testing.md, docs/validation/user-test-1.md) were NOT changed — these are verbatim user quotes from test sessions conducted before the token format upgrade. Altering quoted speech would constitute evidence fabrication. The phase2-rectification-report.md correctly documents the token format upgrade.",
+  "noChangesRequired": [
+    "backend/src/utils/seed.js — no institution name references; Abishek Kumar and STU-2024-001 preserved as-is",
+    "frontend/src/— no institution name found in any JSX/JS source file",
+    "docs/1-empathy-portfolio.md — already contained 'Rathinam Technical Campus'",
+    "docs/ai-audit/ai-interaction-audit.md — no old institution name or format issues found",
+    "docs/5-progress-report.md — no old institution name or format issues found",
+    "docs/review/phase2-rectification-report.md — no old institution name; correctly documents known limitations"
+  ],
+  "generatedAt": "2026-09-30",
+  "step": "Step 1-4: Institution name replacement and doc consistency fixes"
+}

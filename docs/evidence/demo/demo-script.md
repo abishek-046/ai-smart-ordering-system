@@ -48,7 +48,7 @@
 - Show checkout page with item thumbnails and total
 - Show the scheduled pickup time
 - Click "Place Order"
-- Show Order Confirmation page with large digital token (e.g. ORD-0929-4578)
+- Show Order Confirmation page with large digital token (e.g. ORD-0929-a3f8c2d1)
 
 ### Step 8: Order Tracking (30 seconds) ← KEY FEATURE
 - Click "Track Order →"

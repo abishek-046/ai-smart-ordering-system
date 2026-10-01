@@ -4,7 +4,7 @@
 > **Project Better Tomorrow** — Eliminating physical canteen queues through AI-powered pre-ordering, smart pickup time prediction, digital tokens, and live order tracking.
 
 **GitHub:** https://github.com/abishek-046/ai-smart-ordering-system  
-**Institution:** Sri Venkateswara College of Engineering  
+**Institution:** Rathinam Technical Campus  
 **Team:** Abishek
 
 ---
@@ -375,4 +375,4 @@ The following features are intentionally deferred to future phases:
 
 *Built with React + Node.js + PostgreSQL + Prisma + Tailwind CSS*  
 *AI engine: algorithmic with external API escape hatch*  
-*Sri Venkateswara College of Engineering — September 2026*
+*Rathinam Technical Campus — September 2026*

@@ -2,7 +2,7 @@
 ## College Canteen — Field Research
 
 **Observer:** Abishek  
-**Institution:** Sri Venkateswara College of Engineering  
+**Institution:** Rathinam Technical Campus  
 **Observation Period:** 9–13 September 2026  
 **Total Time:** ~135 minutes across 3 sessions
 
@@ -127,4 +127,4 @@
 ---
 
 *Observation log prepared: 14 September 2026*  
-*Sri Venkateswara College of Engineering*
+*Rathinam Technical Campus*

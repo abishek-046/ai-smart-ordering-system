@@ -16,7 +16,7 @@
 ---
 
 ### WHERE does the problem occur?
-The college canteen at Sri Venkateswara College of Engineering, specifically at the ordering counter and pickup area during peak service periods.
+The college canteen at Rathinam Technical Campus, specifically at the ordering counter and pickup area during peak service periods.
 
 ---
 
@@ -135,4 +135,4 @@ Each problem component maps directly to a built feature:
 ---
 
 *Problem definition derived from field research: 9–14 September 2026*  
-*Sri Venkateswara College of Engineering*
+*Rathinam Technical Campus*
