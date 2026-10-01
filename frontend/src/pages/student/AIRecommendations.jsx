@@ -251,7 +251,7 @@ export default function AIRecommendations() {
                             {formatCurrency(item.price)}
                           </p>
                           <button
-                            onClick={() => addToCart(item.id, 1)}
+                            onClick={() => addToCart(item.id, 1).catch(() => {})}
                             disabled={!item.isAvailable}
                             className="mt-1.5 text-xs font-bold px-3 py-1 rounded-lg text-white disabled:opacity-40"
                             style={{ background: 'linear-gradient(135deg,#d97706,#f59e0b)' }}
