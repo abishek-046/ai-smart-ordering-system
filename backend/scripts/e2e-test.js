@@ -63,7 +63,7 @@ async function run() {
   const assert = (condition, msg) => { if (!condition) throw new Error(msg); };
 
   console.log('\n╔══════════════════════════════════════════════════════════════╗');
-  console.log('║   E2E + SECURITY EDGE CASE TEST SUITE (Phase 2)              ║');
+  console.log('║   E2E + SECURITY EDGE CASE TEST SUITE (Phase 3 — 33 tests)   ║');
   console.log('╚══════════════════════════════════════════════════════════════╝\n');
 
   // ── HAPPY PATH ───────────────────────────────────────────────────────────────
@@ -263,6 +263,24 @@ async function run() {
   await test('NEW: Menu category filter validation (400 on invalid)', async () => {
     const r = await req('GET', '/api/menu?category=INVALID_CAT');
     assert(r.status === 400, `Expected 400, got ${r.status}`);
+  });
+
+  // ── ADMIN INPUT VALIDATION (audit fixes) ─────────────────────────────────────
+
+  await test('AUDIT: Admin orders invalid status returns 400', async () => {
+    const r = await req('GET', '/api/admin/orders?status=NOTAREAL', null, adminToken);
+    assert(r.status === 400, `Expected 400, got ${r.status}: ${r.body?.message}`);
+  });
+
+  await test('AUDIT: Admin orders invalid date returns 400', async () => {
+    const r = await req('GET', '/api/admin/orders?date=not-a-date', null, adminToken);
+    assert(r.status === 400, `Expected 400, got ${r.status}: ${r.body?.message}`);
+  });
+
+  await test('AUDIT: Admin orders limit clamped to 100 max', async () => {
+    const r = await req('GET', '/api/admin/orders?limit=99999', null, adminToken);
+    assert(r.status === 200 && Array.isArray(r.body.orders), `Got ${r.status}`);
+    // Response should succeed — server silently clamps limit to 100
   });
 
   // ── SUMMARY ──────────────────────────────────────────────────────────────────

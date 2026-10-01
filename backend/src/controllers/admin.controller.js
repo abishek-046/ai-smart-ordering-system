@@ -2,13 +2,36 @@ const prisma = require('../utils/prisma');
 
 // ─── Orders ──────────────────────────────────────────────────────────────────
 
+const VALID_ORDER_STATUSES = ['PENDING', 'ACCEPTED', 'PREPARING', 'READY', 'COLLECTED', 'CANCELLED'];
+
 const getAllOrders = async (req, res, next) => {
   try {
     const { status, limit = 50, offset = 0, date } = req.query;
+
+    // Validate and clamp limit/offset — prevent full-table dumps
+    const take = Math.min(Math.max(parseInt(limit) || 50, 1), 100);
+    const skip = Math.max(parseInt(offset) || 0, 0);
+
     const where = {};
-    if (status) where.status = status.toUpperCase();
+
+    // Validate status enum before passing to Prisma
+    if (status) {
+      const s = status.toUpperCase();
+      if (!VALID_ORDER_STATUSES.includes(s)) {
+        return res.status(400).json({
+          success: false,
+          message: `Invalid status. Use one of: ${VALID_ORDER_STATUSES.join(', ')}`,
+        });
+      }
+      where.status = s;
+    }
+
+    // Validate date param before constructing range
     if (date) {
       const d = new Date(date);
+      if (isNaN(d.getTime())) {
+        return res.status(400).json({ success: false, message: 'Invalid date format. Use YYYY-MM-DD.' });
+      }
       const nextDay = new Date(d);
       nextDay.setDate(nextDay.getDate() + 1);
       where.createdAt = { gte: d, lt: nextDay };
@@ -22,8 +45,8 @@ const getAllOrders = async (req, res, next) => {
           items: { include: { foodItem: { select: { name: true, category: true, prepTimeMinutes: true } } } },
         },
         orderBy: { createdAt: 'desc' },
-        take: parseInt(limit),
-        skip: parseInt(offset),
+        take,
+        skip,
       }),
       prisma.order.count({ where }),
     ]);
