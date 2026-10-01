@@ -108,7 +108,7 @@ export default function OrderTracking() {
               <div
                 className="h-full transition-all duration-700"
                 style={{
-                  width: `${Math.max(0, statusIdx) * 25}%`,
+                  width: `${Math.min(100, Math.max(0, statusIdx) * 25)}%`,
                   background: 'linear-gradient(90deg,#d97706,#f59e0b)',
                 }}
               />

@@ -100,6 +100,7 @@ const getKitchenQueue = async (req, res, next) => {
         },
       },
       orderBy: { pickupTime: 'asc' },
+      take: 100, // cap at 100 active orders to prevent unbounded memory usage
     });
 
     // Add urgency flag for orders picking up in < 15 min
@@ -180,16 +181,17 @@ const getAnalytics = async (req, res, next) => {
       }),
     ]);
 
-    // Resolve top item names
-    const topItemsWithNames = await Promise.all(
-      topItems.map(async (item) => {
-        const food = await prisma.foodItem.findUnique({
-          where: { id: item.foodItemId },
-          select: { name: true, category: true },
-        });
-        return { ...food, totalOrdered: item._sum.quantity };
-      })
-    );
+    // Resolve top item names — fix N+1 with a single query
+    const foodItemIds = topItems.map(i => i.foodItemId);
+    const foodDetails = await prisma.foodItem.findMany({
+      where: { id: { in: foodItemIds } },
+      select: { id: true, name: true, category: true },
+    });
+    const foodMap = Object.fromEntries(foodDetails.map(f => [f.id, f]));
+    const topItemsWithNames = topItems.map(item => ({
+      ...foodMap[item.foodItemId],
+      totalOrdered: item._sum.quantity,
+    })).filter(i => i.name); // exclude any orphaned items
 
     const statusMap = {};
     ordersByStatus.forEach((s) => { statusMap[s.status] = s._count.id; });

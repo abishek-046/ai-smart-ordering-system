@@ -6,42 +6,52 @@ import StatusBadge from '../../components/ui/StatusBadge';
 import Spinner from '../../components/ui/Spinner';
 import toast from 'react-hot-toast';
 
-const FILTERS    = ['ALL', 'PENDING', 'ACCEPTED', 'PREPARING', 'READY', 'COLLECTED', 'CANCELLED'];
+const FILTERS     = ['ALL', 'PENDING', 'ACCEPTED', 'PREPARING', 'READY', 'COLLECTED', 'CANCELLED'];
 const NEXT_STATUS = { PENDING: 'ACCEPTED', ACCEPTED: 'PREPARING', PREPARING: 'READY', READY: 'COLLECTED' };
 const NEXT_LABEL  = { PENDING: 'Accept', ACCEPTED: 'Start Prep', PREPARING: 'Mark Ready', READY: 'Collected' };
 
+// Statuses that still allow admin cancellation
+const CANCELLABLE = ['PENDING', 'ACCEPTED'];
+
+const PAGE_SIZE = 20;
+
 export default function AdminOrders() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [orders, setOrders]             = useState([]);
-  const [loading, setLoading]           = useState(true);
-  const [updating, setUpdating]         = useState({});
-  const [total, setTotal]               = useState(0);
+  const [orders, setOrders]   = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState({});
+  const [total, setTotal]     = useState(0);
+  const [page, setPage]       = useState(0);
+
   const statusFilter = searchParams.get('status') || 'ALL';
 
-  const fetchOrders = useCallback(() => {
+  const fetchOrders = useCallback((p = page) => {
     setLoading(true);
-    const params = statusFilter !== 'ALL' ? { status: statusFilter } : {};
+    const params = { limit: PAGE_SIZE, offset: p * PAGE_SIZE };
+    if (statusFilter !== 'ALL') params.status = statusFilter;
     adminApi.getOrders(params)
       .then(r => { setOrders(r.data.orders); setTotal(r.data.total); })
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [statusFilter]);
+  }, [statusFilter, page]);
 
-  useEffect(() => { fetchOrders(); }, [fetchOrders]);
+  // Reset page when filter changes
+  useEffect(() => { setPage(0); }, [statusFilter]);
+  useEffect(() => { fetchOrders(page); }, [fetchOrders, page]);
 
   // Auto-refresh every 30s for active filters
   useEffect(() => {
     if (!['ALL', 'PENDING', 'ACCEPTED', 'PREPARING'].includes(statusFilter)) return;
-    const t = setInterval(fetchOrders, 30000);
+    const t = setInterval(() => fetchOrders(page), 30000);
     return () => clearInterval(t);
-  }, [fetchOrders, statusFilter]);
+  }, [fetchOrders, statusFilter, page]);
 
   const handleUpdate = async (orderId, newStatus) => {
     setUpdating(p => ({ ...p, [orderId]: true }));
     try {
       await adminApi.updateOrderStatus(orderId, newStatus);
       toast.success(`Order → ${newStatus}`);
-      fetchOrders();
+      fetchOrders(page);
     } catch (err) {
       toast.error(getApiError(err));
     } finally {
@@ -49,14 +59,19 @@ export default function AdminOrders() {
     }
   };
 
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+
   return (
     <div className="space-y-5 animate-fade-in">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="font-display text-2xl font-bold text-charcoal-900">Orders</h2>
-          <p className="text-charcoal-400 font-body text-sm">{total} orders found</p>
+          <p className="text-charcoal-400 font-body text-sm">
+            {total} orders
+            {totalPages > 1 && ` — page ${page + 1} of ${totalPages}`}
+          </p>
         </div>
-        <button onClick={fetchOrders} className="btn-secondary text-sm py-2 px-4">
+        <button onClick={() => fetchOrders(page)} className="btn-secondary text-sm py-2 px-4">
           🔄 Refresh
         </button>
       </div>
@@ -66,7 +81,7 @@ export default function AdminOrders() {
         {FILTERS.map(f => (
           <button
             key={f}
-            onClick={() => setSearchParams(f !== 'ALL' ? { status: f } : {})}
+            onClick={() => { setSearchParams(f !== 'ALL' ? { status: f } : {}); setPage(0); }}
             className={statusFilter === f ? 'cat-tab-active' : 'cat-tab-inactive'}
             aria-pressed={statusFilter === f}
           >
@@ -86,86 +101,106 @@ export default function AdminOrders() {
           </p>
         </div>
       ) : (
-        <div className="space-y-4">
-          {orders.map(order => (
-            <div key={order.id} className="card" style={{ border: '1px solid rgba(0,0,0,0.06)' }}>
-              {/* Header */}
-              <div className="flex items-start justify-between gap-4 mb-3">
-                <div>
-                  <div className="flex items-center gap-2 flex-wrap mb-0.5">
-                    <span className="font-mono font-bold text-charcoal-900">{order.token}</span>
-                    <StatusBadge status={order.status} />
+        <>
+          <div className="space-y-4">
+            {orders.map(order => (
+              <div key={order.id} className="card" style={{ border: '1px solid rgba(0,0,0,0.06)' }}>
+                {/* Header */}
+                <div className="flex items-start justify-between gap-4 mb-3">
+                  <div>
+                    <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                      <span className="font-mono font-bold text-charcoal-900">{order.token}</span>
+                      <StatusBadge status={order.status} />
+                    </div>
+                    <p className="font-semibold text-charcoal-800 text-sm">{order.user?.name}</p>
+                    {order.user?.studentId && (
+                      <p className="text-xs text-charcoal-400 font-body">{order.user.studentId}</p>
+                    )}
+                    <p className="text-xs text-charcoal-400 font-body">{formatDateTime(order.createdAt)}</p>
                   </div>
-                  <p className="font-semibold text-charcoal-800 text-sm">{order.user?.name}</p>
-                  {order.user?.studentId && (
-                    <p className="text-xs text-charcoal-400 font-body">{order.user.studentId}</p>
-                  )}
-                  <p className="text-xs text-charcoal-400 font-body">{formatDateTime(order.createdAt)}</p>
-                </div>
-                <div className="text-right flex-shrink-0">
-                  <p className="font-display font-bold text-xl" style={{ color: '#d97706' }}>
-                    {formatCurrency(order.totalAmount)}
-                  </p>
-                  <p className="text-xs text-charcoal-400 font-body">
-                    Pickup: <span className="font-semibold">{formatTime(order.pickupTime)}</span>
-                  </p>
-                </div>
-              </div>
-
-              {/* Items */}
-              <div
-                className="rounded-2xl p-3 mb-3 space-y-1"
-                style={{ background: '#fdf8f0', border: '1px solid rgba(217,119,6,0.08)' }}
-              >
-                {order.items.map(oi => (
-                  <div key={oi.id} className="flex justify-between text-sm font-body">
-                    <span className="text-charcoal-700">
-                      {oi.foodItem?.name} × {oi.quantity}
-                    </span>
-                    <span className="text-charcoal-400 text-xs">{oi.foodItem?.category}</span>
+                  <div className="text-right flex-shrink-0">
+                    <p className="font-display font-bold text-xl" style={{ color: '#d97706' }}>
+                      {formatCurrency(order.totalAmount)}
+                    </p>
+                    <p className="text-xs text-charcoal-400 font-body">
+                      Pickup: <span className="font-semibold">{formatTime(order.pickupTime)}</span>
+                    </p>
                   </div>
-                ))}
-              </div>
+                </div>
 
-              {order.specialInstructions && (
+                {/* Items */}
                 <div
-                  className="text-xs rounded-xl px-3 py-2 mb-3 font-body"
-                  style={{
-                    background: 'rgba(234,179,8,0.08)',
-                    color: '#92400e',
-                    border: '1px solid rgba(234,179,8,0.2)',
-                  }}
+                  className="rounded-2xl p-3 mb-3 space-y-1"
+                  style={{ background: '#fdf8f0', border: '1px solid rgba(217,119,6,0.08)' }}
                 >
-                  📝 {order.specialInstructions}
+                  {order.items.map(oi => (
+                    <div key={oi.id} className="flex justify-between text-sm font-body">
+                      <span className="text-charcoal-700">{oi.foodItem?.name} × {oi.quantity}</span>
+                      <span className="text-charcoal-400 text-xs">{oi.foodItem?.category}</span>
+                    </div>
+                  ))}
                 </div>
-              )}
 
-              {/* Actions */}
-              <div className="flex gap-2 flex-wrap">
-                {NEXT_STATUS[order.status] && (
-                  <button
-                    onClick={() => handleUpdate(order.id, NEXT_STATUS[order.status])}
-                    disabled={updating[order.id]}
-                    className="btn-gold text-sm py-2 px-5 flex items-center gap-2"
+                {order.specialInstructions && (
+                  <div
+                    className="text-xs rounded-xl px-3 py-2 mb-3 font-body"
+                    style={{ background: 'rgba(234,179,8,0.08)', color: '#92400e', border: '1px solid rgba(234,179,8,0.2)' }}
                   >
-                    {updating[order.id]
-                      ? <Spinner size="sm" color="white" />
-                      : `✓ ${NEXT_LABEL[order.status]}`}
-                  </button>
+                    📝 {order.specialInstructions}
+                  </div>
                 )}
-                {order.status === 'PENDING' && (
-                  <button
-                    onClick={() => handleUpdate(order.id, 'CANCELLED')}
-                    disabled={updating[order.id]}
-                    className="btn-danger text-sm py-2 px-4"
-                  >
-                    Cancel
-                  </button>
-                )}
+
+                {/* Actions */}
+                <div className="flex gap-2 flex-wrap">
+                  {NEXT_STATUS[order.status] && (
+                    <button
+                      onClick={() => handleUpdate(order.id, NEXT_STATUS[order.status])}
+                      disabled={updating[order.id]}
+                      className="btn-gold text-sm py-2 px-5 flex items-center gap-2"
+                    >
+                      {updating[order.id]
+                        ? <Spinner size="sm" color="white" />
+                        : `✓ ${NEXT_LABEL[order.status]}`}
+                    </button>
+                  )}
+                  {/* Cancel is available for PENDING and ACCEPTED (audit fix) */}
+                  {CANCELLABLE.includes(order.status) && (
+                    <button
+                      onClick={() => handleUpdate(order.id, 'CANCELLED')}
+                      disabled={updating[order.id]}
+                      className="btn-danger text-sm py-2 px-4"
+                    >
+                      Cancel Order
+                    </button>
+                  )}
+                </div>
               </div>
+            ))}
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-3 pt-2">
+              <button
+                onClick={() => setPage(p => Math.max(0, p - 1))}
+                disabled={page === 0}
+                className="btn-secondary text-sm py-2 px-4 disabled:opacity-40"
+              >
+                ← Prev
+              </button>
+              <span className="text-sm text-charcoal-500 font-body">
+                {page + 1} / {totalPages}
+              </span>
+              <button
+                onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
+                disabled={page >= totalPages - 1}
+                className="btn-secondary text-sm py-2 px-4 disabled:opacity-40"
+              >
+                Next →
+              </button>
             </div>
-          ))}
-        </div>
+          )}
+        </>
       )}
     </div>
   );

@@ -30,7 +30,7 @@ function validateMenuInput({ name, price, prepTimeMinutes, category }, isCreate 
     if (prepTimeMinutes !== undefined && (isNaN(t) || t < 1)) {
       errors.push('Preparation time must be at least 1 minute.');
     }
-    if (t > 180) {
+    if (!isNaN(t) && t > 180) {
       errors.push('Preparation time cannot exceed 180 minutes.');
     }
   }
@@ -61,7 +61,7 @@ const getMenu = async (req, res, next) => {
     if (available !== undefined) where.isAvailable = available === 'true';
 
     if (search) {
-      const safe = search.trim().slice(0, 100); // limit search length
+      const safe = search.trim().slice(0, 100);
       where.OR = [
         { name: { contains: safe, mode: 'insensitive' } },
         { description: { contains: safe, mode: 'insensitive' } },
@@ -127,7 +127,6 @@ const updateFoodItem = async (req, res, next) => {
   try {
     const { name, description, price, category, image, prepTimeMinutes, isAvailable, tags } = req.body;
 
-    // Check item exists first
     const existing = await prisma.foodItem.findUnique({ where: { id: req.params.id } });
     if (!existing) {
       return res.status(404).json({ success: false, message: 'Food item not found.' });
@@ -161,6 +160,30 @@ const deleteFoodItem = async (req, res, next) => {
     if (!existing) {
       return res.status(404).json({ success: false, message: 'Food item not found.' });
     }
+
+    // Check if this item is referenced in any order items
+    // If so, just mark unavailable instead of hard-deleting (preserves order history integrity)
+    const usedInOrders = await prisma.orderItem.findFirst({
+      where: { foodItemId: req.params.id },
+    });
+
+    if (usedInOrders) {
+      // Soft-delete: mark unavailable so existing orders are preserved
+      const updated = await prisma.foodItem.update({
+        where: { id: req.params.id },
+        data: { isAvailable: false },
+      });
+      return res.json({
+        success: true,
+        message: 'Item has existing orders — marked as unavailable instead of deleted (preserves order history).',
+        item: updated,
+        softDeleted: true,
+      });
+    }
+
+    // No order history — safe to hard delete
+    // First remove any cart references
+    await prisma.cartItem.deleteMany({ where: { foodItemId: req.params.id } });
     await prisma.foodItem.delete({ where: { id: req.params.id } });
     res.json({ success: true, message: 'Food item deleted.' });
   } catch (error) {
@@ -187,4 +210,37 @@ const toggleAvailability = async (req, res, next) => {
   }
 };
 
-module.exports = { getMenu, getFoodItem, createFoodItem, updateFoodItem, deleteFoodItem, toggleAvailability };
+// ── Rating endpoint ───────────────────────────────────────────────────────────
+/**
+ * POST /menu/:id/rate
+ * Authenticated students can submit a rating (1–5 stars).
+ * Uses Bayesian average to update the stored rating.
+ */
+const rateFoodItem = async (req, res, next) => {
+  try {
+    const { rating } = req.body;
+    const r = parseInt(rating);
+    if (isNaN(r) || r < 1 || r > 5) {
+      return res.status(400).json({ success: false, message: 'Rating must be an integer between 1 and 5.' });
+    }
+
+    const item = await prisma.foodItem.findUnique({ where: { id: req.params.id } });
+    if (!item) return res.status(404).json({ success: false, message: 'Food item not found.' });
+    if (!item.isAvailable) return res.status(400).json({ success: false, message: 'Cannot rate an unavailable item.' });
+
+    // Bayesian update: new_avg = (old_avg * old_count + new_rating) / (old_count + 1)
+    const newCount  = item.totalRatings + 1;
+    const newRating = parseFloat(((item.rating * item.totalRatings + r) / newCount).toFixed(2));
+
+    const updated = await prisma.foodItem.update({
+      where: { id: req.params.id },
+      data: { rating: newRating, totalRatings: newCount },
+    });
+
+    res.json({ success: true, message: 'Rating submitted.', rating: updated.rating, totalRatings: updated.totalRatings });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { getMenu, getFoodItem, createFoodItem, updateFoodItem, deleteFoodItem, toggleAvailability, rateFoodItem };

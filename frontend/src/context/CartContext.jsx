@@ -59,10 +59,12 @@ export function CartProvider({ children }) {
     try {
       await cartApi.clear();
       setCart({ items: [], total: 0, totalItems: 0 });
-    } catch {
-      // silently fail
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to clear cart');
+      // do NOT optimistically clear — refresh to show current server state
+      await fetchCart();
     }
-  }, []);
+  }, [fetchCart]);
 
   return (
     <CartContext.Provider value={{ cart, loading, addToCart, updateItem, removeItem, clearCart, refreshCart: fetchCart }}>

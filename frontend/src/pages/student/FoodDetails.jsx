@@ -1,10 +1,63 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { menuApi } from '../../services/api';
 import { useCart } from '../../context/CartContext';
 import { formatCurrency, getCategoryLabel } from '../../utils/helpers';
 import FoodImage from '../../components/ui/FoodImage';
 import Spinner from '../../components/ui/Spinner';
+import toast from 'react-hot-toast';
+
+// ── Star Rating Widget ────────────────────────────────────────────────────────
+function StarRating({ itemId, currentRating, totalRatings, onRated }) {
+  const [hover, setHover]   = useState(0);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted]   = useState(false);
+
+  const handleRate = async (stars) => {
+    if (submitting || submitted) return;
+    setSubmitting(true);
+    try {
+      const res = await menuApi.rate(itemId, stars);
+      toast.success(`Rated ${stars} star${stars > 1 ? 's' : ''}! ⭐`);
+      setSubmitted(true);
+      onRated(res.data.rating, res.data.totalRatings);
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to submit rating');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (submitted) {
+    return (
+      <p className="text-xs text-green-600 font-semibold font-body">
+        ✅ Thanks for your rating!
+      </p>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-1">
+      {[1,2,3,4,5].map(star => (
+        <button
+          key={star}
+          onClick={() => handleRate(star)}
+          onMouseEnter={() => setHover(star)}
+          onMouseLeave={() => setHover(0)}
+          disabled={submitting}
+          className="text-2xl transition-transform hover:scale-110 disabled:opacity-50"
+          aria-label={`Rate ${star} star${star > 1 ? 's' : ''}`}
+          title={`${star} star${star > 1 ? 's' : ''}`}
+        >
+          <span style={{ color: star <= (hover || currentRating) ? '#f59e0b' : '#e5e7eb' }}>★</span>
+        </button>
+      ))}
+      <span className="text-xs text-charcoal-400 font-body ml-1">
+        {totalRatings > 0 ? `${currentRating.toFixed(1)} (${totalRatings})` : 'Be the first to rate'}
+      </span>
+    </div>
+  );
+}
 
 export default function FoodDetails() {
   const { id } = useParams();
@@ -13,6 +66,7 @@ export default function FoodDetails() {
   const [loading, setLoading] = useState(true);
   const [qty, setQty]     = useState(1);
   const [adding, setAdding] = useState(false);
+  const [liveRating, setLiveRating] = useState(null);
   const { addToCart }     = useCart();
 
   useEffect(() => {
@@ -108,13 +162,13 @@ export default function FoodDetails() {
 
           {/* Stats */}
           <div
-            className="grid grid-cols-3 gap-4 p-4 rounded-2xl mb-6"
+            className="grid grid-cols-3 gap-4 p-4 rounded-2xl mb-4"
             style={{ background: 'rgba(217,119,6,0.05)', border: '1px solid rgba(217,119,6,0.1)' }}
           >
             {[
               { label: 'Prep Time', value: `${item.prepTimeMinutes} min`, icon: '⏱️' },
-              { label: 'Rating',    value: item.totalRatings > 0 ? `⭐ ${item.rating.toFixed(1)}` : 'New', icon: null },
-              { label: 'Reviews',   value: item.totalRatings, icon: null },
+              { label: 'Rating',    value: item.totalRatings > 0 ? `⭐ ${(liveRating?.rating ?? item.rating).toFixed(1)}` : 'New', icon: null },
+              { label: 'Reviews',   value: liveRating?.totalRatings ?? item.totalRatings, icon: null },
             ].map(s => (
               <div key={s.label} className="text-center">
                 <p className="text-xs text-charcoal-400 font-body mb-1">{s.label}</p>
@@ -122,6 +176,19 @@ export default function FoodDetails() {
               </div>
             ))}
           </div>
+
+          {/* Rating widget — only for available items */}
+          {item.isAvailable && (
+            <div className="mb-5 flex items-center gap-2">
+              <span className="text-xs font-semibold text-charcoal-500 font-body">Rate this dish:</span>
+              <StarRating
+                itemId={item.id}
+                currentRating={liveRating?.rating ?? item.rating}
+                totalRatings={liveRating?.totalRatings ?? item.totalRatings}
+                onRated={(rating, totalRatings) => setLiveRating({ rating, totalRatings })}
+              />
+            </div>
+          )}
 
           {/* Add to cart */}
           {item.isAvailable ? (

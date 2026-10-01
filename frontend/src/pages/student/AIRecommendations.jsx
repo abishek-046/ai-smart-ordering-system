@@ -44,7 +44,7 @@ function RecommendationCard({ item, onAdd }) {
             className="absolute bottom-2 left-2 text-xs font-bold px-2 py-1 rounded-full backdrop-blur-sm"
             style={{ background: 'rgba(15,10,6,0.65)', color: '#fbbf24' }}
           >
-            {item.aiScore}% match
+            {Math.min(100, item.aiScore)}% match
           </div>
         )}
       </Link>
@@ -64,7 +64,7 @@ function RecommendationCard({ item, onAdd }) {
               />
             </div>
             <span className="text-xs text-charcoal-400 font-body w-10 text-right flex-shrink-0">
-              {item.aiScore}%
+              {Math.min(100, item.aiScore)}%
             </span>
           </div>
         )}

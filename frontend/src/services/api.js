@@ -41,6 +41,7 @@ export const authApi = {
 export const menuApi = {
   getAll: (params) => api.get('/menu', { params }),
   getById: (id) => api.get(`/menu/${id}`),
+  rate: (id, rating) => api.post(`/menu/${id}/rate`, { rating }),
   create: (data) => api.post('/menu', data),
   update: (id, data) => api.put(`/menu/${id}`, data),
   delete: (id) => api.delete(`/menu/${id}`),

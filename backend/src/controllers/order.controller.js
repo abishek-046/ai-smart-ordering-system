@@ -21,7 +21,17 @@ const createOrder = async (req, res, next) => {
   try {
     const { pickupTime, specialInstructions } = req.body;
 
-    // 1. Validate pickupTime
+    // 1. Validate specialInstructions
+    if (specialInstructions !== undefined && specialInstructions !== null) {
+      if (typeof specialInstructions !== 'string') {
+        return res.status(400).json({ success: false, message: 'specialInstructions must be a string.' });
+      }
+      if (specialInstructions.trim().length > 300) {
+        return res.status(400).json({ success: false, message: 'Special instructions cannot exceed 300 characters.' });
+      }
+    }
+
+    // 2. Validate pickupTime
     if (!pickupTime) {
       return res.status(400).json({ success: false, message: 'Pickup time is required.' });
     }
@@ -33,19 +43,17 @@ const createOrder = async (req, res, next) => {
     if (pickupDate <= now) {
       return res.status(400).json({ success: false, message: 'Pickup time must be in the future.' });
     }
-    // Pickup must be within 24 hours from now
     const maxPickup = new Date(now.getTime() + 24 * 60 * 60 * 1000);
     if (pickupDate > maxPickup) {
       return res.status(400).json({ success: false, message: 'Pickup time cannot be more than 24 hours from now.' });
     }
 
-    // 2. Check if user already has an active (non-terminal) pending order
-    //    This prevents duplicate submissions from double-clicks or race conditions
+    // 3. Duplicate-order prevention (60-second window)
     const activeOrder = await prisma.order.findFirst({
       where: {
         userId: req.user.id,
         status: { in: ['PENDING'] },
-        createdAt: { gte: new Date(now.getTime() - 60 * 1000) }, // within last 60 seconds
+        createdAt: { gte: new Date(now.getTime() - 60 * 1000) },
       },
     });
     if (activeOrder) {
@@ -57,7 +65,7 @@ const createOrder = async (req, res, next) => {
       });
     }
 
-    // 3. Get cart items
+    // 4. Get cart items
     const cartItems = await prisma.cartItem.findMany({
       where: { userId: req.user.id },
       include: { foodItem: true },
@@ -66,7 +74,7 @@ const createOrder = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Your cart is empty.' });
     }
 
-    // 4. Validate all items are still available
+    // 5. Validate all items are still available
     const unavailable = cartItems.filter(ci => !ci.foodItem.isAvailable);
     if (unavailable.length > 0) {
       return res.status(400).json({
@@ -75,42 +83,29 @@ const createOrder = async (req, res, next) => {
       });
     }
 
-    // 5. Validate quantities
+    // 6. Validate quantities
     const invalidQty = cartItems.filter(ci => ci.quantity < 1 || ci.quantity > 20);
     if (invalidQty.length > 0) {
-      return res.status(400).json({
-        success: false,
-        message: 'One or more cart items have an invalid quantity.',
-      });
+      return res.status(400).json({ success: false, message: 'One or more cart items have an invalid quantity.' });
     }
 
-    // 6. Calculate total server-side (never trust client price)
-    const totalAmount = cartItems.reduce(
-      (sum, ci) => sum + ci.foodItem.price * ci.quantity, 0
-    );
+    // 7. Calculate total server-side — never trust client prices
+    const totalAmount = cartItems.reduce((sum, ci) => sum + ci.foodItem.price * ci.quantity, 0);
     const maxPrepTime = Math.max(...cartItems.map(ci => ci.foodItem.prepTimeMinutes));
-    const estimatedPrepTime = maxPrepTime + Math.ceil(
-      cartItems.reduce((s, ci) => s + ci.quantity, 0) * 1.5
-    );
+    const estimatedPrepTime = maxPrepTime + Math.ceil(cartItems.reduce((s, ci) => s + ci.quantity, 0) * 1.5);
 
-    // 7. Generate unique token (with collision retry)
-    let token;
-    let attempts = 0;
-    do {
-      token = generateOrderToken();
-      const existing = await prisma.order.findUnique({ where: { token } });
-      if (!existing) break;
-      attempts++;
-    } while (attempts < 10);
-
-    // Verify final token is unique (handles the edge case where all 10 attempts collide)
-    const tokenConflict = await prisma.order.findUnique({ where: { token } });
-    if (tokenConflict) {
-      return res.status(500).json({ success: false, message: 'Could not generate a unique order token. Please try again.' });
-    }
-
-    // 8. Create order atomically — price computed from DB, cart cleared in same transaction
+    // 8. Create order atomically — token generated INSIDE transaction to prevent
+    //    race conditions (the DB unique constraint is the final safety net)
     const order = await prisma.$transaction(async (tx) => {
+      // Generate token inside transaction
+      let token;
+      for (let attempt = 0; attempt < 10; attempt++) {
+        const candidate = generateOrderToken();
+        const exists = await tx.order.findUnique({ where: { token: candidate } });
+        if (!exists) { token = candidate; break; }
+      }
+      if (!token) throw new Error('TOKEN_EXHAUSTED');
+
       const newOrder = await tx.order.create({
         data: {
           token,
@@ -123,7 +118,7 @@ const createOrder = async (req, res, next) => {
             create: cartItems.map(ci => ({
               foodItemId: ci.foodItemId,
               quantity: ci.quantity,
-              unitPrice: ci.foodItem.price, // snapshot price at order time
+              unitPrice: ci.foodItem.price,
             })),
           },
         },
@@ -132,12 +127,16 @@ const createOrder = async (req, res, next) => {
           user: { select: { name: true, email: true, studentId: true } },
         },
       });
+
       await tx.cartItem.deleteMany({ where: { userId: req.user.id } });
       return newOrder;
     });
 
     res.status(201).json({ success: true, message: 'Order placed successfully!', order });
   } catch (error) {
+    if (error.message === 'TOKEN_EXHAUSTED') {
+      return res.status(500).json({ success: false, message: 'Could not generate a unique order token. Please try again.' });
+    }
     next(error);
   }
 };
@@ -148,7 +147,6 @@ const getMyOrders = async (req, res, next) => {
   try {
     const { status, limit = 20, offset = 0 } = req.query;
 
-    // Clamp pagination values
     const take = Math.min(Math.max(parseInt(limit) || 20, 1), 100);
     const skip = Math.max(parseInt(offset) || 0, 0);
 
@@ -183,7 +181,6 @@ const getMyOrders = async (req, res, next) => {
 
 const getOrderById = async (req, res, next) => {
   try {
-    // userId scoped — student can only see their own orders
     const order = await prisma.order.findFirst({
       where: { id: req.params.id, userId: req.user.id },
       include: {
@@ -204,8 +201,14 @@ const getOrderById = async (req, res, next) => {
 
 const trackByToken = async (req, res, next) => {
   try {
+    // Validate token format — accepts both old (ORD-MMDD-4digits) and new (ORD-MMDD-8hex) formats
+    const { token } = req.params;
+    if (!token || !/^ORD-\d{4}-([a-f0-9]{8}|\d{4})$/i.test(token)) {
+      return res.status(400).json({ success: false, message: 'Invalid order token format.' });
+    }
+
     const order = await prisma.order.findUnique({
-      where: { token: req.params.token },
+      where: { token },
       include: {
         items: { include: { foodItem: { select: { name: true, image: true, prepTimeMinutes: true, category: true } } } },
         user: { select: { name: true } },
@@ -216,7 +219,6 @@ const trackByToken = async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'Order not found with this token.' });
     }
 
-    // Ownership check — student can only track their own order; admin can track any
     if (order.userId !== req.user.id && req.user.role !== 'ADMIN') {
       return res.status(403).json({ success: false, message: 'Access denied.' });
     }
@@ -246,7 +248,6 @@ const trackByToken = async (req, res, next) => {
 
 const cancelOrder = async (req, res, next) => {
   try {
-    // Scoped to owner
     const order = await prisma.order.findFirst({
       where: { id: req.params.id, userId: req.user.id },
     });

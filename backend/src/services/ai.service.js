@@ -202,7 +202,7 @@ async function getFoodRecommendations(userId) {
     if (item.totalRatings > 150) score += 10;
     if (item.totalRatings > 250) score += 5;
 
-    return { ...item, aiScore: Math.round(score) };
+    return { ...item, aiScore: Math.min(100, Math.max(0, Math.round(score))) };
   });
 
   const sortedByScore = [...scored].sort((a, b) => b.aiScore - a.aiScore);
@@ -248,8 +248,9 @@ async function getKitchenLoadPrediction() {
       status: { in: ['PENDING', 'ACCEPTED', 'PREPARING'] },
       pickupTime: { gte: now, lte: next3Hours },
     },
-    include: { items: { include: { foodItem: true } } },
+    include: { items: { include: { foodItem: { select: { id: true, prepTimeMinutes: true } } } } },
     orderBy: { pickupTime: 'asc' },
+    take: 200, // cap to prevent unbounded memory usage
   });
 
   // Group by 30-min slots

@@ -79,10 +79,14 @@ export default function MenuManagement() {
   };
 
   const handleDelete = async (id, name) => {
-    if (!window.confirm(`Delete "${name}"? This cannot be undone.`)) return;
+    if (!window.confirm(`Delete "${name}"?\n\nIf this item has existing orders it will be marked unavailable instead of deleted (to preserve order history).`)) return;
     try {
-      await adminApi.deleteMenuItem(id);
-      toast.success('Item deleted');
+      const res = await adminApi.deleteMenuItem(id);
+      if (res.data.softDeleted) {
+        toast.success(`"${name}" has existing orders — marked as unavailable`);
+      } else {
+        toast.success('Item deleted');
+      }
       fetchMenu();
     } catch (err) {
       toast.error(getApiError(err));
