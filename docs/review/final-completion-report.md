@@ -25,8 +25,8 @@ All tasks completed successfully. The project is in a fully review-ready state.
 
 ## 2. Institution Name Rename
 
-**From:** Sri Venkateswara College of Engineering  
-**To:** Rathinam Technical Campus
+**Updated to:** Rathinam Technical Campus  
+**Previous value:** (old institution name — fully replaced)
 
 ### Files Updated
 
