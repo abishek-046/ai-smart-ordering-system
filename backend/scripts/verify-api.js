@@ -5,23 +5,25 @@ const http = require('http');
 
 function req(method, path, body = null, token = null) {
   return new Promise((resolve, reject) => {
+    const data = body ? JSON.stringify(body) : null;
     const opts = {
       hostname: 'localhost', port: 5000, path, method,
       headers: {
         'Content-Type': 'application/json',
+        'Content-Length': data ? Buffer.byteLength(data) : 0,
         ...(token && { Authorization: `Bearer ${token}` }),
       },
     };
     const request = http.request(opts, (res) => {
-      let data = '';
-      res.on('data', (c) => (data += c));
+      let d = '';
+      res.on('data', (c) => (d += c));
       res.on('end', () => {
-        try { resolve({ status: res.statusCode, body: JSON.parse(data) }); }
-        catch { resolve({ status: res.statusCode, body: data }); }
+        try { resolve({ status: res.statusCode, body: JSON.parse(d) }); }
+        catch { resolve({ status: res.statusCode, body: d }); }
       });
     });
-    request.on('error', reject);
-    if (body) request.write(JSON.stringify(body));
+    request.on('error', (e) => reject(new Error(`Connection failed: ${e.message}`)));
+    if (data) request.write(data);
     request.end();
   });
 }
