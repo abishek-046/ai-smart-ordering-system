@@ -89,13 +89,24 @@ const createOrder = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'One or more cart items have an invalid quantity.' });
     }
 
-    // 7. Calculate total server-side — never trust client prices
+    // 7. Calculate total server-side — never trust client prices.
+    //    Prices are read directly from the DB food item record, so a
+    //    client cannot manipulate totalAmount by sending altered prices.
     const totalAmount = cartItems.reduce((sum, ci) => sum + ci.foodItem.price * ci.quantity, 0);
+    // estimatedPrepTime = max single-item prep + 1.5 min overhead per item in order.
+    // This models a single-station kitchen: longest item dominates, plus queue overhead.
     const maxPrepTime = Math.max(...cartItems.map(ci => ci.foodItem.prepTimeMinutes));
     const estimatedPrepTime = maxPrepTime + Math.ceil(cartItems.reduce((s, ci) => s + ci.quantity, 0) * 1.5);
 
     // 8. Create order atomically — token generated INSIDE transaction to prevent
-    //    race conditions (the DB unique constraint is the final safety net)
+    //    race conditions (the DB unique constraint is the final safety net).
+    //
+    //    Why retry loop inside the transaction (not outside)?
+    //    If token generation were outside the transaction, two concurrent
+    //    requests could both generate the same token, both find it "not exists",
+    //    and then both try to insert — one would fail with a P2002.
+    //    Inside the transaction we hold a write lock for that token check,
+    //    making the check-then-insert atomic.
     const order = await prisma.$transaction(async (tx) => {
       // Generate token inside transaction
       let token;

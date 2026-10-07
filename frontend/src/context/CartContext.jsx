@@ -5,6 +5,20 @@ import toast from 'react-hot-toast';
 
 const CartContext = createContext(null);
 
+/**
+ * CartProvider — manages cart state globally for authenticated students.
+ *
+ * State design decisions:
+ *  - Cart state lives in React context (not localStorage) so it always
+ *    reflects the server's authoritative state. localStorage cart would
+ *    drift if items became unavailable or prices changed.
+ *  - fetchCart is wrapped in useCallback with [user] dependency so it
+ *    automatically re-fetches when the user logs in or out.
+ *  - On logout (user becomes null) the cart is reset to empty locally —
+ *    no server call needed since the JWT is gone.
+ *  - clearCart optimistically resets local state, then re-fetches on error
+ *    to restore accurate state rather than showing stale empty cart.
+ */
 export function CartProvider({ children }) {
   const { user } = useAuth();
   const [cart, setCart] = useState({ items: [], total: 0, totalItems: 0 });

@@ -12,4 +12,10 @@ export default defineConfig({
       },
     },
   },
+  // Vitest configuration — runs in jsdom environment for browser-like globals
+  test: {
+    environment: 'node',
+    include: ['src/**/__tests__/**/*.test.{js,jsx}'],
+    globals: false,
+  },
 });

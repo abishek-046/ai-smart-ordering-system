@@ -3,6 +3,23 @@ import { authApi } from '../services/api';
 
 const AuthContext = createContext(null);
 
+/**
+ * AuthProvider — manages authentication state for the entire app.
+ *
+ * Token strategy:
+ *  - JWT is stored in localStorage (not httpOnly cookie) because this is
+ *    a local campus intranet application, not a public internet service.
+ *    For a public deployment, httpOnly cookies with CSRF protection would
+ *    be the preferred approach.
+ *  - On app start, if a token exists in localStorage, we call GET /auth/me
+ *    to validate it and hydrate the user object. An expired or invalid token
+ *    causes the catch block to remove it and set user=null.
+ *  - The global axios interceptor (in api.js) handles mid-session expiry:
+ *    any 401 response clears localStorage and redirects to /login.
+ *
+ * updateUser() allows profile edits to update the context without a full
+ * re-fetch — this keeps the nav bar name immediately in sync.
+ */
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);

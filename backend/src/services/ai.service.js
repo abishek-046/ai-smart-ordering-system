@@ -81,10 +81,13 @@ async function getPickupSlots(userId, cartItems) {
     slotLoad[key] = (slotLoad[key] || 0) + 1;
   }
 
-  // Canteen peak hours (higher load = less ideal)
+  // Canteen peak hours (higher load = less ideal for a new order's pickup)
+  // These hours see the highest walk-in traffic and concurrent order volume.
   const peakHours = [8, 9, 12, 13, 14]; // 8-9am, 12-2pm
 
-  // Generate candidate slots
+  // Score each candidate slot.
+  // Lower load + off-peak + closer pickup = higher score.
+  // Score is clamped 0–100 before returning (clamp applied in caller).
   const slots = [];
   for (let i = 0; i < 12; i++) {
     const slotTime = new Date(slotStart.getTime() + i * 15 * 60000);
@@ -147,7 +150,9 @@ async function getFoodRecommendations(userId) {
   const external = await callExternalAI('/recommendations', { userId });
   if (external) return external;
 
-  // Build order history profile
+  // Build user preference profile from completed order history.
+  // We use COLLECTED + READY (not PENDING/CANCELLED) so the profile
+  // reflects food the user actually received and presumably enjoyed.
   const orders = await prisma.order.findMany({
     where: { userId, status: { in: ['COLLECTED', 'READY'] } },
     include: { items: { include: { foodItem: true } } },

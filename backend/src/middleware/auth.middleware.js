@@ -1,6 +1,21 @@
 const jwt = require('jsonwebtoken');
 const prisma = require('../utils/prisma');
 
+/**
+ * protect — JWT authentication middleware.
+ *
+ * Validates the Bearer token in the Authorization header, then fetches
+ * the user from the database to confirm the account still exists.
+ *
+ * Attaches req.user = { id, name, email, role, studentId } on success.
+ *
+ * Why we re-fetch from DB on every request (not just decode the JWT):
+ *  - Ensures a deleted or suspended account cannot continue making requests
+ *    with a still-valid JWT (JWTs are stateless and cannot be invalidated
+ *    without a blocklist; re-fetching the user is our mitigation).
+ *  - The select is narrow (no password hash) to minimise data exposure.
+ */
+
 const protect = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
@@ -33,6 +48,13 @@ const protect = async (req, res, next) => {
   }
 };
 
+/**
+ * adminOnly — role-based access control middleware.
+ *
+ * Must be used AFTER protect (depends on req.user being set).
+ * Returns 403 Forbidden for any non-ADMIN role, including unauthenticated
+ * requests where protect failed to set req.user.
+ */
 const adminOnly = (req, res, next) => {
   if (!req.user || req.user.role !== 'ADMIN') {
     return res.status(403).json({ success: false, message: 'Access denied. Admins only.' });

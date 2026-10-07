@@ -6,6 +6,9 @@
   "scripts": {
     "dev": "nodemon src/index.js",
     "start": "node src/index.js",
+    "test": "jest --testPathPatterns=__tests__ --runInBand",
+    "test:watch": "jest --testPathPatterns=__tests__ --watch",
+    "test:coverage": "jest --testPathPatterns=__tests__ --coverage",
     "db:migrate": "prisma migrate dev --name init",
     "db:migrate:deploy": "prisma migrate deploy",
     "db:generate": "prisma generate",
@@ -14,6 +17,16 @@
     "seed": "node src/utils/seed.js",
     "setup": "npm install && npx prisma generate",
     "verify": "node scripts/verify-api.js"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": ["**/__tests__/**/*.test.js"],
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/index.js",
+      "!src/utils/seed.js",
+      "!src/utils/prisma.js"
+    ]
   },
   "dependencies": {
     "@prisma/client": "^5.10.2",
@@ -28,7 +41,10 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
+    "@jest/globals": "^30.5.2",
+    "jest": "^30.5.2",
     "nodemon": "^3.1.0",
-    "prisma": "^5.10.2"
+    "prisma": "^5.10.2",
+    "supertest": "^7.3.1"
   }
 }
