@@ -224,16 +224,24 @@ npm run dev
 cd backend
 npm test
 # Runs all __tests__/**/*.test.js files
-# Expected: all tests pass
 ```
 
-Test files:
-- `src/utils/__tests__/tokenGenerator.test.js` — token format, entropy, uniqueness
-- `src/controllers/__tests__/menu.validation.test.js` — menu input validation
-- `src/controllers/__tests__/order.validation.test.js` — order/cart/pickup validation
-- `src/services/__tests__/ai.helpers.test.js` — AI slot/scoring/rating helpers
-- `src/middleware/__tests__/auth.middleware.test.js` — JWT protect + adminOnly
-- `src/middleware/__tests__/error.middleware.test.js` — error handler + notFound
+**Test suites (9) and counts:**
+
+| Suite | File | Tests |
+|-------|------|-------|
+| tokenGenerator | `src/utils/__tests__/tokenGenerator.test.js` | 6 |
+| menu validation | `src/controllers/__tests__/menu.validation.test.js` | 25 |
+| order validation | `src/controllers/__tests__/order.validation.test.js` | 26 |
+| AI helpers | `src/services/__tests__/ai.helpers.test.js` | 26 |
+| auth middleware | `src/middleware/__tests__/auth.middleware.test.js` | 10 |
+| error middleware | `src/middleware/__tests__/error.middleware.test.js` | 7 |
+| auth validation | `src/controllers/__tests__/auth.validation.test.js` | 22 |
+| admin transitions | `src/controllers/__tests__/admin.transitions.test.js` | 17 |
+| cart validation | `src/controllers/__tests__/cart.validation.test.js` | 35 |
+| **Total** | | **174** |
+
+**Expected result:** `Test Suites: 9 passed, 9 total — Tests: 174 passed, 174 total`
 
 ### Unit Tests (Vitest — frontend)
 
@@ -241,18 +249,22 @@ Test files:
 cd frontend
 npm test
 # Runs all src/**/__tests__/**/*.test.{js,jsx}
-# Expected: all tests pass
 ```
 
-Test files:
-- `src/utils/__tests__/helpers.test.js` — formatCurrency, getStatusLabel, getApiError, etc.
+**Test suites (1):**
+
+| Suite | File | Tests |
+|-------|------|-------|
+| helper utilities | `src/utils/__tests__/helpers.test.js` | 29 |
+
+**Expected result:** `Test Files 1 passed (1) — Tests 29 passed (29)`
 
 ### API Smoke Tests (no database required)
 
 ```bash
 # With backend running on :5000
 cd backend && node scripts/verify-api.js
-# Expected: 20/20 PASS
+# Expected: PASSED: 20 / 20   FAILED: 0
 ```
 
 ### End-to-End Tests (requires running backend + database)
@@ -260,15 +272,14 @@ cd backend && node scripts/verify-api.js
 ```bash
 # With backend running on :5000 and database seeded
 cd backend && node scripts/e2e-test.js
-# Expected: 33/33 PASS
-# Covers: student flow, admin flow, security edge cases, audit validations
+# Expected: ALL 33 TESTS PASSED (Happy path + Security edge cases)
 ```
 
 ### Frontend Production Build
 
 ```bash
 cd frontend && npm run build
-# Expected: 124 modules, 0 errors
+# Expected: 124 modules transformed, built in ~3s, 0 errors
 ```
 
 ---
