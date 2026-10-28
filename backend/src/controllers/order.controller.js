@@ -256,7 +256,17 @@ const trackByToken = async (req, res, next) => {
 };
 
 // ─── Cancel Order ─────────────────────────────────────────────────────────────
-
+/**
+ * Student-facing cancellation. Only PENDING orders can be cancelled here.
+ *
+ * Design rationale:
+ *  - Once ACCEPTED the kitchen has acknowledged the order and may have
+ *    started sourcing ingredients. Allowing cancellation at that point
+ *    would create operational confusion.
+ *  - Admins can cancel PENDING or ACCEPTED orders via PATCH /admin/orders/:id/status.
+ *  - The userId scope (findFirst with userId) ensures a student can only
+ *    cancel their own order — not another student's.
+ */
 const cancelOrder = async (req, res, next) => {
   try {
     const order = await prisma.order.findFirst({

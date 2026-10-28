@@ -231,17 +231,17 @@ npm test
 | Suite | File | Tests |
 |-------|------|-------|
 | tokenGenerator | `src/utils/__tests__/tokenGenerator.test.js` | 6 |
-| menu validation | `src/controllers/__tests__/menu.validation.test.js` | 25 |
-| order validation | `src/controllers/__tests__/order.validation.test.js` | 26 |
+| menu validation | `src/controllers/__tests__/menu.validation.test.js` | 27 |
+| order validation | `src/controllers/__tests__/order.validation.test.js` | 28 |
 | AI helpers | `src/services/__tests__/ai.helpers.test.js` | 26 |
 | auth middleware | `src/middleware/__tests__/auth.middleware.test.js` | 10 |
 | error middleware | `src/middleware/__tests__/error.middleware.test.js` | 7 |
-| auth validation | `src/controllers/__tests__/auth.validation.test.js` | 22 |
+| auth validation | `src/controllers/__tests__/auth.validation.test.js` | 24 |
 | admin transitions | `src/controllers/__tests__/admin.transitions.test.js` | 17 |
 | cart validation | `src/controllers/__tests__/cart.validation.test.js` | 35 |
-| **Total** | | **174** |
+| **Total** | | **180** |
 
-**Actual result (7 Oct 2026):** `Test Suites: 9 passed, 9 total — Tests: 174 passed, 174 total`
+**Actual result (7 Oct 2026):** `Test Suites: 9 passed, 9 total — Tests: 180 passed, 180 total`
 
 > **Coverage note:** Tests use inline re-implementations of business logic to avoid a live DB dependency, keeping them fast and isolated. Istanbul therefore shows low statement coverage on controller files. `error.middleware.js` (imported directly) reports 100% coverage. Overall: 3.33% statements — reflects test architecture, not test quality.
 
@@ -1218,15 +1218,13 @@ The following items are intentionally deferred to future phases:
 
 ---
 
----
-
 ## Final Verification (7 October 2026)
 
 All checks below were executed in the actual development environment on the committed codebase.
 
 | Check | Result |
 |-------|--------|
-| **Backend unit tests** | ✅ 174 / 174 passed — 9 suites, 0 failures |
+| **Backend unit tests** | ✅ 180 / 180 passed — 9 suites, 0 failures |
 | **Backend coverage (Istanbul)** | 3.33% statements overall — `error.middleware.js` 100%. Low coverage is architectural (DB-free inline tests), not a quality issue. |
 | **Frontend unit tests** | ✅ 29 / 29 passed — 1 suite, 0 failures |
 | **Frontend coverage** | Not available — `@vitest/coverage-v8` version mismatch with `vitest@1.6.1` (Vite 5 compatibility constraint). Tests pass; coverage HTML unavailable. |

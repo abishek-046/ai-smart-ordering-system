@@ -83,6 +83,16 @@ describe('validateMenuInput (isCreate=true)', () => {
     expect(errors.some(e => e.includes('Name'))).toBe(true);
   });
 
+  it('rejects empty string name', () => {
+    const errors = validateMenuInput({ name: '', price: 50, category: 'LUNCH' }, true);
+    expect(errors.some(e => e.includes('Name'))).toBe(true);
+  });
+
+  it('rejects whitespace-only name', () => {
+    const errors = validateMenuInput({ name: '   ', price: 50, category: 'LUNCH' }, true);
+    expect(errors.some(e => e.includes('Name'))).toBe(true);
+  });
+
   it('rejects name shorter than 2 characters', () => {
     const errors = validateMenuInput({ name: 'A', price: 50, category: 'LUNCH' }, true);
     expect(errors.some(e => e.includes('Name'))).toBe(true);

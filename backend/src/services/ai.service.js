@@ -243,7 +243,22 @@ async function getFoodRecommendations(userId) {
 }
 
 // ─── Kitchen Load Prediction ─────────────────────────────────────────────────
-
+/**
+ * Predicts kitchen workload for the next 3 hours in 30-minute slots.
+ *
+ * Algorithm:
+ * 1. Fetch all active orders (PENDING/ACCEPTED/PREPARING) with pickupTime
+ *    within the next 3 hours — capped at 200 to bound memory usage.
+ * 2. Group orders into 30-min time buckets by their pickupTime.
+ * 3. For each bucket, calculate:
+ *    - orderCount: number of orders due in that window
+ *    - estimatedLoad: (orderCount / 10) × 100 — 10 concurrent orders = 100% load
+ *    - loadLabel: Low (<3), Moderate (3–6), High (≥7)
+ * 4. Also return the overall currentLoad based on total active orders.
+ *
+ * Used by the admin AI Predictions page to visualise upcoming kitchen demand
+ * and by getPickupSlots to show students how busy each slot will be.
+ */
 async function getKitchenLoadPrediction() {
   const now = new Date();
   const next3Hours = new Date(now.getTime() + 3 * 60 * 60 * 1000);

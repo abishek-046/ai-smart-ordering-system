@@ -76,6 +76,17 @@ describe('validatePickupTime', () => {
     expect(validatePickupTime('banana')).toBeTruthy();
   });
 
+  it('rejects numeric 0 as pickupTime', () => {
+    // 0 is falsy — treated as missing
+    expect(validatePickupTime(0)).toBeTruthy();
+  });
+
+  it('rejects numeric timestamp in the past', () => {
+    // A past epoch number should fail — not a string, treated as missing
+    const past = new Date(Date.now() - 60000).toISOString();
+    expect(validatePickupTime(past)).toBeTruthy();
+  });
+
   it('rejects a time in the past', () => {
     const err = validatePickupTime(PAST_1MIN());
     expect(err).toContain('future');

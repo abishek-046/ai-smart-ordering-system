@@ -75,6 +75,14 @@ describe('validatePasswordChange', () => {
     expect(validatePasswordChange({})).toBeTruthy();
   });
 
+  it('rejects empty string currentPassword', () => {
+    expect(validatePasswordChange({ currentPassword: '', newPassword: 'valid123' })).toBeTruthy();
+  });
+
+  it('rejects empty string newPassword', () => {
+    expect(validatePasswordChange({ currentPassword: 'old123', newPassword: '' })).toBeTruthy();
+  });
+
   it('rejects newPassword shorter than 6 characters', () => {
     const err = validatePasswordChange({ currentPassword: 'old123', newPassword: 'abc' });
     expect(err).toContain('6 characters');
